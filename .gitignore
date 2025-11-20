@@ -29,3 +29,6 @@ build/
 
 # Ignora arquivos de configuração do IDE
 .vscode/
+
+# Mantem o wrapper do Gradle
+!gradle-wrapper.jar
