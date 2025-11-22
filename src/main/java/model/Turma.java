@@ -40,6 +40,10 @@ public class Turma {
         this.horarios = new ArrayList<>();
     }
 
+    public Turma (){
+        this.horarios = new ArrayList<>();
+    }
+
     public String getCodigo() {
         return codigo;
     }
@@ -74,5 +78,17 @@ public class Turma {
 
     public void setCor(String cor) {
         this.cor = cor;
+    }
+    
+    //verifica se turmas conflitam em seus horarios
+    public boolean conflitaCom(Turma novaTurma){
+        for (Horario horariosTurma : this.horarios){
+            for(Horario horariosNovaTurma : novaTurma.horarios){
+                if (horariosTurma.conflitaCom(horariosNovaTurma)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

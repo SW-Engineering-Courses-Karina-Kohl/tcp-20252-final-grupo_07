@@ -12,15 +12,16 @@ public class Grade {
         this.creditosTotais = 0;
     }
 
-    /*  
-    TODO: Ajustar a funçaõ de conflito entre turmas 
-    private boolean conflitaCom(Turma novaTurma) {
-        
+    public Grade(Grade grade){
+        this.turmasSelecionadas = new ArrayList<>();
+        for (Turma turma : grade.getTurmasSelecionadas()){
+            this.turmasSelecionadas.add(turma);
+        }
+        this.creditosTotais = grade.creditosTotais;
     }
 
-    TODO: Ajustar a função de adicionar uma turma
     public boolean adicionarTurma(Turma turma){
-        if(!turma.conflitaCom(this.turmasSelecionadas)){
+        if(!this.conflitoNaGrade(turma)){
             this.turmasSelecionadas.add(turma);
             atualizaCreditosTotais();
             return true;
@@ -28,11 +29,19 @@ public class Grade {
         return false;
     } 
 
-    TODO: Ajustar a função de remover uma turma
+    private boolean conflitoNaGrade(Turma novaTurma) {
+        for (Turma turmaNaGrade : this.turmasSelecionadas){
+            if(novaTurma.conflitaCom(turmaNaGrade)){
+               return true; 
+            }
+        }
+        return false;
+    }
+
     public void removerTurma(Turma turma) {
         this.turmasSelecionadas.remove(turma);
         atualizaCreditosTotais();
-    } */ 
+    } 
 
     private void atualizaCreditosTotais(){
         this.creditosTotais = 0;
