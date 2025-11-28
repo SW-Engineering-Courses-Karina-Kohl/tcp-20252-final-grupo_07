@@ -4,22 +4,29 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Preferencias {
-    //preferencias
     private Turno turnoPreferido;
     private List<String> professoresPreferidos;
-    //restricoes
+
     private List<String> professoresEvitados;
     private List<Horario> horariosEvitados;
-    private int maxCreditos;
+    private int numeroCadeiras; 
 
     public Preferencias() {
         this.professoresPreferidos = new ArrayList<>();
         this.professoresEvitados = new ArrayList<>();
         this.horariosEvitados = new ArrayList<>();
-        this.maxCreditos = 30;
+        this.numeroCadeiras = 2; 
     }
 
-public Turno getTurnoPreferido() {
+    public int getNumeroCadeiras() {
+        return numeroCadeiras;
+    }
+
+    public void setNumeroCadeiras(int numeroCadeiras) {
+        this.numeroCadeiras = numeroCadeiras;
+    }
+
+    public Turno getTurnoPreferido() {
         return turnoPreferido;
     }
 
@@ -49,13 +56,5 @@ public Turno getTurnoPreferido() {
 
     public void adicionarHorarioBloqueado(Horario horario) {
         this.horariosEvitados.add(horario);
-    }
-
-    public int getMaxCreditos() {
-        return maxCreditos;
-    }
-
-    public void setMaxCreditos(int maxCreditos) {
-        this.maxCreditos = maxCreditos;
     }
 }

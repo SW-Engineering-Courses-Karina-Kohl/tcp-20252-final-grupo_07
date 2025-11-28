@@ -8,11 +8,14 @@ import model.Horario;
 import model.Professor;
 import model.Turma;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.*;
 import java.util.List;
 
 public class AppGUI {
-
+    private static final Logger logger = LogManager.getLogger(AppGUI.class);
     // Essas constantes precisam ficar DENTRO da classe
     public static final int DIAS_DA_SEMANA = 6;      // Segunda–Sábado
     public static final int NUMERO_DE_HORARIOS = 16; // Ex.: 7h–22h
@@ -20,6 +23,8 @@ public class AppGUI {
     // Método estático para abrir a janela recebendo a lista de grades
     public static void mostrar(List<Grade> gradesSelecionadas) {
         if (gradesSelecionadas == null || gradesSelecionadas.isEmpty()) {
+            //log erro fatal
+            logger.fatal("Tentativa de mostrar GUI com lista de grades nula ou vazia.");
             throw new IllegalArgumentException("A lista de grades não pode ser vazia.");
         }
 
@@ -114,6 +119,9 @@ public class AppGUI {
                     botaoTurma.addActionListener(e -> {
                         Disciplina d = turma.getDisciplina();
                         Professor p = turma.getProfessor();
+
+                        //log acoes do usuario
+                        logger.info("Usuário visualizou detalhes da disciplina: {} (Turma {})", d.getNome(), turma.getCodigo());
 
                         String info =
                                 d.getCodigo() + "\n" +
