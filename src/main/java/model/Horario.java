@@ -29,6 +29,9 @@ public class Horario {
     }
 
     public boolean conflitaCom(Horario outro) {
+        if (outro == null) {
+            throw new IllegalArgumentException("O horário para comparação não pode ser nulo.");
+        }
         if (this.diaSemana != outro.diaSemana) {
             return false;
         }
