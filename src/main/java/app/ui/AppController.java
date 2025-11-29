@@ -1,5 +1,3 @@
-// Classe que controla as diferentes paginas e faz a integracao entre as diferentes interfaces
-
 package app.ui;
 
 import javax.swing.*;
@@ -27,39 +25,50 @@ public class AppController {
         container = new JPanel(layout);
         frame.add(container);
 
-        container.add(InsercaoGUI.criarTela(this), "INSERCAO");
-        container.add(PreferenciasGUI.criarTela(this), "PREFERENCIAS");
-        container.add(GradeGUI.criarTela(this), "GRADE");
+        container.add(MenuInicialGUI.criarTela(this),      "MENU");
+        container.add(InsercaoGUI.criarTela(this),         "INSERCAO");
+        container.add(PreferenciasGUI.criarTela(this),     "PREFERENCIAS");
+        container.add(GradeGUI.criarTela(this),            "GRADE");
 
         frame.setSize(1400, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        mostrarInsercao();
+        mostrarMenu();
     }
 
-    // diferentes interfaes
+    public void mostrarMenu() {
+        layout.show(container, "MENU");
+    }
 
     public void mostrarInsercao() {
         layout.show(container, "INSERCAO");
     }
 
     public void mostrarPreferencias() {
+        // ATUALIZA A LISTA DE PROFESSORES SEMPRE QUE ENTRAR NA TELA
+        PreferenciasGUI.atualizarProfessores(this);
         layout.show(container, "PREFERENCIAS");
     }
 
     public void mostrarGrade() {
         layout.show(container, "GRADE");
     }
-
     // criacao de grades a partir das turmas e preferencias, com verificacao de alguns dados
     public void gerarGrades() {
 
         if (preferencias == null) {
             JOptionPane.showMessageDialog(null,
-                "Erro: Nenhuma preferência definida.",
-                "Erro", JOptionPane.ERROR_MESSAGE);
+                    "Erro: Nenhuma preferência definida.",
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (turmasCriadas.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Erro: Nenhuma turma cadastrada (CSV ou manual).",
+                    "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -84,14 +93,14 @@ public class AppController {
         }
 
         GeradorDeGrades gerador = new GeradorDeGrades(disciplinas, preferencias);
-        gerador.startCombina();
+        gerador.gerarGrades(); // usa o método novo
 
         gradesGeradas = gerador.getGrades();
 
         if (gradesGeradas.isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                "Nenhuma grade possível com as restrições.",
-                "Aviso", JOptionPane.WARNING_MESSAGE);
+                    "Nenhuma grade possível com as restrições.",
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 

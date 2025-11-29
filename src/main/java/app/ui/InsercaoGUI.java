@@ -1,207 +1,291 @@
 package app.ui;
 
+import model.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.HierarchyEvent;
-
-import model.*;
 
 public class InsercaoGUI {
 
-    // campos de texto para insercao de informacoes
-    private static JTextField fieldNomeDisc, fieldCodDisc, fieldCreditos;
-    private static JTextField fieldNomeProf, fieldVagas, fieldCodTurma;
-    private static JTextField fieldSala, fieldHoraInicio, fieldHoraFim;
+    // Campos de texto
+    private static JTextField fieldNomeDisc;
+    private static JTextField fieldCodDisc;
+    private static JTextField fieldCreditos;
 
-    // checkboxes para selecao de dias
-    private static JCheckBox chkSeg, chkTer, chkQua, chkQui, chkSex, chkSab;
+    private static JTextField fieldCodTurma;
+    private static JTextField fieldNomeProf;
+    private static JTextField fieldVagas;
+    private static JTextField fieldSala;
 
-    // horários temporários antes de criar a turma
-    private static List<Horario> horariosTemp = new ArrayList<>();
+    private static JTextField fieldHoraInicio;
+    private static JTextField fieldHoraFim;
 
-    // lista lateral de turmas criadas
-    private static DefaultListModel<String> listaTurmasModel = new DefaultListModel<>();
-    private static JList<String> listaTurmas = new JList<>(listaTurmasModel);
+    // Checkboxes de dia da semana
+    private static JCheckBox cbSeg;
+    private static JCheckBox cbTer;
+    private static JCheckBox cbQua;
+    private static JCheckBox cbQui;
+    private static JCheckBox cbSex;
 
-    public static JPanel criarTela(AppController app) {
+    // Lista de turmas criadas só para exibir na tela
+    private static DefaultListModel<String> modeloListaTurmas = new DefaultListModel<>();
 
-        JPanel root = new JPanel(new BorderLayout());
+    public static JPanel criarTela(AppController controller) {
+        JPanel painel = new JPanel(new BorderLayout());
+        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel painelInsercao = new JPanel();
-        painelInsercao.setLayout(new BoxLayout(painelInsercao, BoxLayout.Y_AXIS));
-        painelInsercao.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        JLabel titulo = new JLabel("Inserção manual de disciplinas e turmas", SwingConstants.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 22));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        painel.add(titulo, BorderLayout.NORTH);
 
-        JLabel titulo = new JLabel("Cadastro de Turmas");
-        titulo.setFont(new Font("Arial", Font.BOLD, 26));
-        painelInsercao.add(titulo);
-        painelInsercao.add(Box.createVerticalStrut(20));
+        // ====================== CENTRO: FORMULÁRIOS ===========================
+        JPanel centro = new JPanel(new GridLayout(1, 2, 20, 0));
 
-        // Campos
-        fieldNomeDisc = criarCampo(painelInsercao, "Nome da Disciplina:", 20);
-        fieldCodDisc  = criarCampo(painelInsercao, "Codigo da Disciplina:", 20);
-        fieldCreditos = criarCampo(painelInsercao, "Creditos:", 5);
-        fieldNomeProf = criarCampo(painelInsercao, "Nome do Professor:", 20);
-        fieldVagas    = criarCampo(painelInsercao, "Vagas:", 5);
-        fieldCodTurma = criarCampo(painelInsercao, "Codigo da Turma:", 10);
-        fieldSala     = criarCampo(painelInsercao, "Sala:", 10);
+        // ----------- Lado esquerdo: dados da disciplina e turma --------------
+        JPanel painelForm = new JPanel();
+        painelForm.setLayout(new BoxLayout(painelForm, BoxLayout.Y_AXIS));
 
-        // Dias da Semana
-        painelInsercao.add(new JLabel("Dias da Semana:"));
-        JPanel painelDias = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // DISCIPLINA
+        JPanel painelDisciplina = new JPanel(new GridLayout(3, 2, 5, 5));
+        painelDisciplina.setBorder(BorderFactory.createTitledBorder("Disciplina"));
 
-        chkSeg = new JCheckBox("Segunda");
-        chkTer = new JCheckBox("Terca");
-        chkQua = new JCheckBox("Quarta");
-        chkQui = new JCheckBox("Quinta");
-        chkSex = new JCheckBox("Sexta");
-        chkSab = new JCheckBox("Sabado");
+        fieldNomeDisc = new JTextField();
+        fieldCodDisc = new JTextField();
+        fieldCreditos = new JTextField();
 
-        painelDias.add(chkSeg); painelDias.add(chkTer); painelDias.add(chkQua);
-        painelDias.add(chkQui); painelDias.add(chkSex); painelDias.add(chkSab);
+        painelDisciplina.add(new JLabel("Nome da disciplina:"));
+        painelDisciplina.add(fieldNomeDisc);
 
-        painelInsercao.add(painelDias);
+        painelDisciplina.add(new JLabel("Código da disciplina:"));
+        painelDisciplina.add(fieldCodDisc);
 
-        // Horarios
-        fieldHoraInicio = criarCampo(painelInsercao, "Inicio (HH:mm):", 6);
-        fieldHoraFim    = criarCampo(painelInsercao, "Fim (HH:mm):", 6);
+        painelDisciplina.add(new JLabel("Créditos:"));
+        painelDisciplina.add(fieldCreditos);
 
-        // Botoes
-        JButton btnAddHorario = new JButton("Inserir Horario");
-        btnAddHorario.addActionListener(e -> criarHorario());
+        painelForm.add(painelDisciplina);
+        painelForm.add(Box.createVerticalStrut(10));
 
-        JButton btnCriarTurma = new JButton("Criar Turma");
-        btnCriarTurma.addActionListener(e -> criarTurma(app));
+        // TURMA
+        JPanel painelTurma = new JPanel(new GridLayout(4, 2, 5, 5));
+        painelTurma.setBorder(BorderFactory.createTitledBorder("Turma"));
 
-        JButton btnPronto = new JButton("Pronto");
-        btnPronto.addActionListener(e -> app.mostrarPreferencias());
+        fieldCodTurma = new JTextField();
+        fieldNomeProf = new JTextField();
+        fieldVagas = new JTextField();
+        fieldSala = new JTextField();
 
-        JPanel linhaBtns = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        linhaBtns.add(btnAddHorario);
-        linhaBtns.add(btnCriarTurma);
-        linhaBtns.add(btnPronto);
+        painelTurma.add(new JLabel("Código da turma:"));
+        painelTurma.add(fieldCodTurma);
 
-        painelInsercao.add(Box.createVerticalStrut(15));
-        painelInsercao.add(linhaBtns);
+        painelTurma.add(new JLabel("Professor:"));
+        painelTurma.add(fieldNomeProf);
 
-        // lista de turmas criadas
+        painelTurma.add(new JLabel("Vagas ofertadas:"));
+        painelTurma.add(fieldVagas);
+
+        painelTurma.add(new JLabel("Sala:"));
+        painelTurma.add(fieldSala);
+
+        painelForm.add(painelTurma);
+        painelForm.add(Box.createVerticalStrut(10));
+
+        // HORÁRIOS
+        JPanel painelHorario = new JPanel(new GridLayout(3, 2, 5, 5));
+        painelHorario.setBorder(BorderFactory.createTitledBorder("Horário (para esta turma)"));
+
+        fieldHoraInicio = new JTextField("08:30");
+        fieldHoraFim = new JTextField("10:10");
+
+        cbSeg = new JCheckBox("Segunda");
+        cbTer = new JCheckBox("Terça");
+        cbQua = new JCheckBox("Quarta");
+        cbQui = new JCheckBox("Quinta");
+        cbSex = new JCheckBox("Sexta");
+
+        JPanel painelDias = new JPanel(new GridLayout(1, 5));
+        painelDias.add(cbSeg);
+        painelDias.add(cbTer);
+        painelDias.add(cbQua);
+        painelDias.add(cbQui);
+        painelDias.add(cbSex);
+
+        painelHorario.add(new JLabel("Hora início (HH:MM):"));
+        painelHorario.add(fieldHoraInicio);
+
+        painelHorario.add(new JLabel("Hora fim (HH:MM):"));
+        painelHorario.add(fieldHoraFim);
+
+        painelHorario.add(new JLabel("Dias da semana:"));
+        painelHorario.add(painelDias);
+
+        painelForm.add(painelHorario);
+
+        centro.add(painelForm);
+
+        // ----------- Lado direito: lista das turmas já cadastradas -----------
+
         JPanel painelLista = new JPanel(new BorderLayout());
-        painelLista.setPreferredSize(new Dimension(350, 0));
-        painelLista.setBorder(BorderFactory.createTitledBorder("Turmas Cadastradas"));
+        painelLista.setBorder(BorderFactory.createTitledBorder("Turmas cadastradas (sessão atual)"));
 
-        listaTurmas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        painelLista.add(new JScrollPane(listaTurmas), BorderLayout.CENTER);
+        JList<String> listaTurmas = new JList<>(modeloListaTurmas);
+        JScrollPane scrollLista = new JScrollPane(listaTurmas);
 
-        root.add(painelInsercao, BorderLayout.CENTER);
-        root.add(painelLista, BorderLayout.EAST);
+        painelLista.add(scrollLista, BorderLayout.CENTER);
 
-        // Atualizar lista sempre que a tela for mostrada novamente
-        root.addHierarchyListener(h -> {
-            if ((h.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && root.isShowing()) {
-                atualizarLista(app);
+        centro.add(painelLista);
+
+        painel.add(centro, BorderLayout.CENTER);
+
+        // ====================== RODAPÉ: BOTÕES ===============================
+
+        JPanel painelBotoes = new JPanel();
+
+        // BOTÃO ADICIONAR TURMA
+        JButton btnAdicionar = new JButton("Adicionar turma");
+        btnAdicionar.addActionListener(e -> adicionarTurma(controller));
+        painelBotoes.add(btnAdicionar);
+
+        // BOTÃO LIMPAR CAMPOS
+        JButton btnLimpar = new JButton("Limpar campos");
+        btnLimpar.addActionListener(e -> limparCampos());
+        painelBotoes.add(btnLimpar);
+
+        // BOTÃO IR PARA PREFERÊNCIAS
+        JButton btnIrPreferencias = new JButton("Ir para preferências");
+        btnIrPreferencias.addActionListener(e -> {
+            if (controller.turmasCriadas.isEmpty()) {
+                JOptionPane.showMessageDialog(painel,
+                        "Cadastre pelo menos uma turma antes de continuar.",
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            controller.mostrarPreferencias();
         });
+        painelBotoes.add(btnIrPreferencias);
 
-        return root;
+        painel.add(painelBotoes, BorderLayout.SOUTH);
+
+        return painel;
     }
 
-    private static void atualizarLista(AppController app) {
-        listaTurmasModel.clear();
-        for (Turma t : app.turmasCriadas)
-            listaTurmasModel.addElement(t.getDisciplina().getNome());
-    }
+    // ===================== MÉTODOS AUXILIARES ===============================
 
-    private static void criarTurma(AppController app) {
+    private static void adicionarTurma(AppController controller) {
         try {
-            Disciplina disc = new Disciplina(
-                    fieldCodDisc.getText().trim(),
-                    fieldNomeDisc.getText().trim(),
-                    Integer.parseInt(fieldCreditos.getText().trim())
+            // valida campos básicos
+            String nomeDisc = fieldNomeDisc.getText().trim();
+            String codDisc = fieldCodDisc.getText().trim();
+            String strCred = fieldCreditos.getText().trim();
+
+            String codTurma = fieldCodTurma.getText().trim();
+            String nomeProf = fieldNomeProf.getText().trim();
+            String strVagas = fieldVagas.getText().trim();
+            String sala = fieldSala.getText().trim();
+
+            String strInicio = fieldHoraInicio.getText().trim();
+            String strFim = fieldHoraFim.getText().trim();
+
+            if (nomeDisc.isEmpty() || codDisc.isEmpty() || strCred.isEmpty() ||
+                codTurma.isEmpty() || nomeProf.isEmpty() || strVagas.isEmpty() ||
+                sala.isEmpty() || strInicio.isEmpty() || strFim.isEmpty()) {
+
+                JOptionPane.showMessageDialog(null,
+                        "Preencha todos os campos antes de adicionar.",
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int creditos = Integer.parseInt(strCred);
+            int vagas = Integer.parseInt(strVagas);
+
+            LocalTime inicio = LocalTime.parse(strInicio);
+            LocalTime fim = LocalTime.parse(strFim);
+
+            // ao menos um dia precisa estar marcado
+            List<DiaSemana> diasSelecionados = new ArrayList<>();
+            if (cbSeg.isSelected()) diasSelecionados.add(DiaSemana.SEGUNDA);
+            if (cbTer.isSelected()) diasSelecionados.add(DiaSemana.TERCA);
+            if (cbQua.isSelected()) diasSelecionados.add(DiaSemana.QUARTA);
+            if (cbQui.isSelected()) diasSelecionados.add(DiaSemana.QUINTA);
+            if (cbSex.isSelected()) diasSelecionados.add(DiaSemana.SEXTA);
+
+            if (diasSelecionados.isEmpty()) {
+                JOptionPane.showMessageDialog(null,
+                        "Selecione ao menos um dia da semana.",
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Reaproveita disciplina se já existir nas turmas criadas
+            Disciplina disciplina = null;
+            for (Turma t : controller.turmasCriadas) {
+                if (t.getDisciplina().getCodigo().equalsIgnoreCase(codDisc)) {
+                    disciplina = t.getDisciplina();
+                    break;
+                }
+            }
+            if (disciplina == null) {
+                disciplina = new Disciplina(codDisc, nomeDisc, creditos);
+            }
+
+            Professor professor = new Professor(nomeProf);
+            Turma turma = new Turma(codTurma, professor, disciplina, vagas, sala);
+
+            // adiciona horários (um para cada dia marcado)
+            for (DiaSemana dia : diasSelecionados) {
+                turma.addHorario(new Horario(inicio, fim, dia));
+            }
+
+            // liga turma à disciplina
+            disciplina.adicionarTurma(turma);
+
+            // adiciona ao controlador (backend global)
+            controller.turmasCriadas.add(turma);
+
+            // adiciona na lista visual
+            modeloListaTurmas.addElement(
+                    String.format("%s - %s | Turma %s | Prof. %s",
+                            disciplina.getCodigo(),
+                            disciplina.getNome(),
+                            turma.getCodigo(),
+                            professor.getNome())
             );
 
-            Professor prof = new Professor(fieldNomeProf.getText().trim());
-
-            Turma turma = new Turma(
-                    fieldCodTurma.getText().trim(),
-                    prof,
-                    disc,
-                    Integer.parseInt(fieldVagas.getText().trim()),
-                    fieldSala.getText().trim()
-            );
-
-            // Adicionar horários à turma
-            for (Horario h : horariosTemp)
-                turma.getHorarios().add(h);
-
-            horariosTemp.clear();
-
-            // Salvar no AppController
-            app.turmasCriadas.add(turma);
-
-            // Atualizar imediatamente a lista lateral
-            listaTurmasModel.addElement(turma.getDisciplina().getNome());
+            JOptionPane.showMessageDialog(null,
+                    "Turma adicionada com sucesso!",
+                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
             limparCampos();
-            JOptionPane.showMessageDialog(null, "Turma criada!");
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "Erro ao adicionar turma:\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // metodo que armazena os 
-    private static void criarHorario() {
-        try {
-            LocalTime ini = LocalTime.parse(fieldHoraInicio.getText().trim());
-            LocalTime fim = LocalTime.parse(fieldHoraFim.getText().trim());
-
-            if (chkSeg.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.SEGUNDA));
-            if (chkTer.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.TERCA));
-            if (chkQua.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.QUARTA));
-            if (chkQui.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.QUINTA));
-            if (chkSex.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.SEXTA));
-            if (chkSab.isSelected()) horariosTemp.add(new Horario(ini, fim, DiaSemana.SABADO));
-
-            JOptionPane.showMessageDialog(null, "Horario adicionado!");
-
-        } catch (DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(null, "Formato invalido! Use HH:mm");
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    private static JTextField criarCampo(JPanel painel, String label, int size) {
-        JPanel linha = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel lbl = new JLabel(label);
-        JTextField txt = new JTextField(size);
-        linha.add(lbl);
-        linha.add(txt);
-        painel.add(linha);
-        return txt;
-    }
-
-    // -------------------------------------------------------------------------
     private static void limparCampos() {
         fieldNomeDisc.setText("");
         fieldCodDisc.setText("");
         fieldCreditos.setText("");
+
+        fieldCodTurma.setText("");
         fieldNomeProf.setText("");
         fieldVagas.setText("");
-        fieldCodTurma.setText("");
         fieldSala.setText("");
-        fieldHoraInicio.setText("");
-        fieldHoraFim.setText("");
 
-        chkSeg.setSelected(false);
-        chkTer.setSelected(false);
-        chkQua.setSelected(false);
-        chkQui.setSelected(false);
-        chkSex.setSelected(false);
-        chkSab.setSelected(false);
+        fieldHoraInicio.setText("08:30");
+        fieldHoraFim.setText("10:10");
 
-        horariosTemp.clear();
+        cbSeg.setSelected(false);
+        cbTer.setSelected(false);
+        cbQua.setSelected(false);
+        cbQui.setSelected(false);
+        cbSex.setSelected(false);
     }
 }

@@ -15,7 +15,7 @@ public class Preferencias {
         this.professoresPreferidos = new ArrayList<>();
         this.professoresEvitados = new ArrayList<>();
         this.horariosEvitados = new ArrayList<>();
-        this.numeroCadeiras = 2; 
+        this.numeroCadeiras = 0; 
     }
 
     public int getNumeroCadeiras() {
