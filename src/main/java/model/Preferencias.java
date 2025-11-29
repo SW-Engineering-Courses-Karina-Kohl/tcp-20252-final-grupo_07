@@ -6,24 +6,23 @@ import java.util.ArrayList;
 public class Preferencias {
     private Turno turnoPreferido;
     private List<String> professoresPreferidos;
-
     private List<String> professoresEvitados;
     private List<Horario> horariosEvitados;
-    private int numeroCadeiras; 
+    private int numeroDisciplinas; 
 
     public Preferencias() {
         this.professoresPreferidos = new ArrayList<>();
         this.professoresEvitados = new ArrayList<>();
         this.horariosEvitados = new ArrayList<>();
-        this.numeroCadeiras = 2; 
+        this.numeroDisciplinas = 2; 
     }
 
-    public int getNumeroCadeiras() {
-        return numeroCadeiras;
+    public int getnumeroDisciplinas() {
+        return numeroDisciplinas;
     }
 
-    public void setNumeroCadeiras(int numeroCadeiras) {
-        this.numeroCadeiras = numeroCadeiras;
+    public void setnumeroDisciplinas(int numeroDisciplinas) {
+        this.numeroDisciplinas = numeroDisciplinas;
     }
 
     public Turno getTurnoPreferido() {

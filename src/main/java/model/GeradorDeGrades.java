@@ -42,7 +42,7 @@ public class GeradorDeGrades {
             return;
         }
 
-        int numCadeiras = preferenciasUsuario.getNumeroCadeiras();
+        int numCadeiras = preferenciasUsuario.getnumeroDisciplinas();
         logger.info("Iniciando geração de grades com {} disciplinas.", numCadeiras);
 
         gradesGeradas.clear();
@@ -58,7 +58,7 @@ public class GeradorDeGrades {
 
     //backtracking!!!!!
     private void buscarCombinacoes(Grade gradeAtual, int indexDisciplina) {
-        int numCadeiras = preferenciasUsuario.getNumeroCadeiras();
+        int numCadeiras = preferenciasUsuario.getnumeroDisciplinas();
         int qtdAtual = gradeAtual.getTurmasSelecionadas().size();
 
         // fez a grade completa. salva
@@ -106,7 +106,7 @@ public class GeradorDeGrades {
         }
 
         //limite de cadeiras
-        if (gradeAtual.getTurmasSelecionadas().size() >= preferenciasUsuario.getNumeroCadeiras()) {
+        if (gradeAtual.getTurmasSelecionadas().size() >= preferenciasUsuario.getnumeroDisciplinas()) {
             return true;
         }
 
