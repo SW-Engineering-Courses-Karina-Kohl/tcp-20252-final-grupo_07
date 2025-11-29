@@ -12,7 +12,7 @@ public class Turma {
     private String sala;
     private String cor; //interface 
 
-    public Turma(String codigo, Professor professor, Disciplina disciplina,int vagasOfertadas, String sala) {
+    public Turma(String codigo, Professor professor, Disciplina disciplina, int vagasOfertadas, String sala) {
         if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("O código da turma não pode ser nulo ou vazio.");
         }
@@ -32,6 +32,7 @@ public class Turma {
             throw new IllegalArgumentException("A disciplina da turma não pode ser nula.");
         }
 
+        this.cor = atribuiCorHexa(disciplina.getNome());
         this.codigo = codigo;
         this.professor = professor;
         this.disciplina = disciplina;
@@ -90,5 +91,14 @@ public class Turma {
             }
         }
         return false;
+    }
+
+    //atribui cor da turma no formato hexadecimal
+    private String atribuiCorHexa(String nomeTurma){
+        int hash = nomeTurma.hashCode();
+        //Formata a string no formato #RRGGBB exigido pela java.awt.Color
+        String corHexa = String.format("#%06X", (0xFFFFFF & hash));
+        return corHexa; 
+
     }
 }

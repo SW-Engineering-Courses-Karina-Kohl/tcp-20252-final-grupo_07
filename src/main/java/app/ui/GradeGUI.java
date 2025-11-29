@@ -127,7 +127,7 @@ public class GradeGUI {
         for (int i = 0; i < HORAS; i++) {
 
             int hora = 7 + i;
-            painelGrade.add(new JLabel(hora + ":00", JLabel.CENTER));
+            painelGrade.add(new JLabel(hora + ":30", JLabel.CENTER));
 
             for (int j = 0; j < DIAS; j++) {
 
@@ -139,8 +139,17 @@ public class GradeGUI {
                     painelGrade.add(vazio);
                 } else {
 
-                    JButton btn = new JButton(t.getDisciplina().getNome());
+                    JButton btn = new JButton(t.getDisciplina().getNome() + " " + t.getCodigo());
                     Turma turmaRef = t;
+
+                    btn.setBackground(Color.WHITE);
+                    try{//muda as cores do texto dos botoes de acordo com a cor da turma
+                        Color corTurma = Color.decode(t.getCor());
+                        btn.setForeground(corTurma.darker()); //darker garante que fica legivel com fundo branco                    
+                    }catch(NumberFormatException e){
+                        btn.setForeground(Color.BLACK);
+                        System.out.println("erro atribuindo as cores");
+                    }
 
                     btn.addActionListener(e -> mostrarInfoTurma(turmaRef));
 
@@ -171,7 +180,7 @@ public class GradeGUI {
         Disciplina d = turma.getDisciplina();
         Professor p = turma.getProfessor();
 
-        String mensagem =
+        String mensagem = //colocar codigo da turma
                 d.getCodigo() + "\n" +
                 d.getNome() + "\n" +
                 "Professor: " + (p != null ? p.getNome() : "-") + "\n" +
