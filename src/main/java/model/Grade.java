@@ -34,6 +34,12 @@ public class Grade {
             if(novaTurma.conflitaCom(turmaNaGrade)){
                return true; 
             }
+
+            String codigoNovaTurma = novaTurma.getDisciplina().getCodigo().trim();
+            String codigoTurmaNaGrade = turmaNaGrade.getDisciplina().getCodigo().trim();
+            if (codigoNovaTurma.equalsIgnoreCase(codigoTurmaNaGrade)) {
+                return true;
+            }
         }
         return false;
     }

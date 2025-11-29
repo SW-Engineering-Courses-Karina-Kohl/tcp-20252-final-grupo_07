@@ -116,15 +116,11 @@ public class Main {
         );
         prefs.adicionarHorarioBloqueado(horarioBloqueado);
 
-        // ex: limite max de 20 creditos (hard constraint)
-        System.out.println("limite max de 20 creditos");
-        prefs.setMaxCreditos(20);
-
 
         // gerador de grades
         System.out.println("\ngerando grades");
         GeradorDeGrades gerador = new GeradorDeGrades(disciplinasDesejadas, prefs);
-        gerador.startCombina();
+        gerador.gerarGrades();
 
         List<Grade> resultados = gerador.getGrades();
 
@@ -167,4 +163,3 @@ public class Main {
         }
     }
 }
-
