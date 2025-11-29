@@ -7,7 +7,7 @@ import java.util.List;
 import app.ui.AppGUI; 
 
 public class main {
-    public static void Main(String[] args) {
+    public static void main(String[] args) {
         System.out.println("testeeee");
 
         //professores

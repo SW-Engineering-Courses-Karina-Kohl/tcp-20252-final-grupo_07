@@ -10,6 +10,7 @@ import model.Turma;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.White;
 
 import java.awt.*;
 import java.util.List;
@@ -50,28 +51,29 @@ public class AppGUI {
                     continue;
                 }
                 for(int k = 0; k< duracao; k++){
-                switch (horario.getDiaSemana()) {
-                    case SEGUNDA:
-                        gradeOrganizada[linha + k][0] = turma;
-                        break;
-                    case TERCA:
-                        gradeOrganizada[linha + k][1] = turma;
-                        break;
-                    case QUARTA:
-                        gradeOrganizada[linha + k][2] = turma;
-                        break;
-                    case QUINTA:
-                        gradeOrganizada[linha + k][3] = turma;
-                        break;
-                    case SEXTA:
-                        gradeOrganizada[linha + k][4] = turma;
-                        break;
-                    case SABADO:
-                        gradeOrganizada[linha + k][5] = turma;
-                        break;
-                    default:
-                        break;
-                }}
+                    switch (horario.getDiaSemana()) {
+                        case SEGUNDA:
+                            gradeOrganizada[linha + k][0] = turma;
+                            break;
+                        case TERCA:
+                            gradeOrganizada[linha + k][1] = turma;
+                            break;
+                        case QUARTA:
+                            gradeOrganizada[linha + k][2] = turma;
+                            break;
+                        case QUINTA:
+                            gradeOrganizada[linha + k][3] = turma;
+                            break;
+                        case SEXTA:
+                            gradeOrganizada[linha + k][4] = turma;
+                            break;
+                        case SABADO:
+                            gradeOrganizada[linha + k][5] = turma;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
@@ -115,7 +117,15 @@ public class AppGUI {
                     botaoVazio.setEnabled(false);
                     gridGrade.add(botaoVazio);
                 } else {
-                    JButton botaoTurma = new JButton(turma.getDisciplina().getNome());
+                    JButton botaoTurma = new JButton(turma.getDisciplina().getNome()+" "+turma.getCodigo());
+                    //----------------------------------------------------------------------------------------------------------------------------------------
+                   // Gera uma cor baseada no nome da disciplina (sempre será a mesma cor para a mesma disciplina)
+                    int hash = turma.getDisciplina().getNome().hashCode();
+                    Color corDinamica = new Color((hash & 0xFF0000) >> 16, (hash & 0x00FF00) >> 8, hash & 0x0000FF); 
+                                    
+                    botaoTurma.setForeground(corDinamica); // .darker() garante que dê leitura no fundo claro
+                    botaoTurma.setBackground(Color.WHITE);
+                    //----------------------------------------------------------------------------------------------------------------------------------------
                     botaoTurma.addActionListener(e -> {
                         Disciplina d = turma.getDisciplina();
                         Professor p = turma.getProfessor();
@@ -124,8 +134,10 @@ public class AppGUI {
                         logger.info("Usuário visualizou detalhes da disciplina: {} (Turma {})", d.getNome(), turma.getCodigo());
 
                         String info =
+
                                 d.getCodigo() + "\n" +
                                 d.getNome() + "\n" +
+                                "Turma: " + turma.getCodigo() + "\n" +
                                 "Professor: " + (p != null ? p.getNome() : "-") + "\n" +
                                 "Vagas ofertadas: " + turma.getVagasOfertadas() + "\n" +
                                 "Sala: " + turma.getSala() + "\n" +
