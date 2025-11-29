@@ -1,0 +1,9 @@
+codigo_disciplina,nome_disciplina,creditos,codigo_turma,professor,sala,vagas,dia,inicio,fim
+INF01120,Tecnicas de Construcao,4,A,Karina Kohl,105,30,SEGUNDA,08:30,10:10
+INF01120,Tecnicas de Construcao,4,A,Karina Kohl,105,30,QUARTA,08:30,10:10
+INF01120,Tecnicas de Construcao,4,B,Marcelo Pimenta,106,30,TERCA,08:30,10:10
+INF01120,Tecnicas de Construcao,4,B,Marcelo Pimenta,106,30,QUINTA,08:30,10:10
+INF00001,Banco de Dados,4,C,Karin Becker,201,40,SEGUNDA,08:30,10:10
+INF00001,Banco de Dados,4,C,Karin Becker,201,40,QUARTA,08:30,10:10
+INF00001,Banco de Dados,4,D,Renata Galante,202,40,TERCA,10:30,12:10
+INF00001,Banco de Dados,4,D,Renata Galante,202,40,QUINTA,10:30,12:10
