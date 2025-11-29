@@ -4,7 +4,7 @@ import model.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import app.ui.AppGUI; 
+import app.ui.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -124,7 +124,7 @@ public class Main {
 
         List<Grade> resultados = gerador.getGrades();
 
-        AppGUI.mostrar(resultados);
+        new AppController();
 
         //print
         System.out.println("\nresultados:");
