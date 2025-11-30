@@ -22,7 +22,8 @@ public class PreferenciasGUI {
             DiaSemana.TERCA,
             DiaSemana.QUARTA,
             DiaSemana.QUINTA,
-            DiaSemana.SEXTA
+            DiaSemana.SEXTA,
+            DiaSemana.SABADO
     };
 
     private static final LocalTime[] INICIOS = {
