@@ -1,83 +1,71 @@
 package app.ui;
 
-import model.Disciplina;
-import model.ExtracaoDados;
-import model.Turma;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.List;
+
+import model.Disciplina;
+import model.ExtracaoDados;
 
 public class MenuInicialGUI {
 
     public static JPanel criarTela(AppController controller) {
         JPanel painel = new JPanel(new BorderLayout());
+        painel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel titulo = new JLabel("Matriculador Master Blaster 9000", SwingConstants.CENTER);
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 24));
-        titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
         painel.add(titulo, BorderLayout.NORTH);
 
-        JPanel centro = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 40, 0, 40);
+        JPanel botoes = new JPanel();
+        botoes.setLayout(new GridLayout(1, 3, 40, 10));
 
+        JButton btnAluno = new JButton("Aluno INF/UFRGS");
         JButton btnCsv = new JButton("Carregar CSV");
         JButton btnManual = new JButton("Inserir manualmente");
 
-        // --- BOTÃO CARREGAR CSV ---
+        //carregar csv aluno inf
+        btnAluno.addActionListener(e -> controller.iniciarFluxoAlunoUfrgs());
+
+        //carregar csv generico
         btnCsv.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            int resultado = chooser.showOpenDialog(painel);
-
-            if (resultado == JFileChooser.APPROVE_OPTION) {
+            int res = chooser.showOpenDialog(painel);
+            if (res == JFileChooser.APPROVE_OPTION) {
                 File arquivo = chooser.getSelectedFile();
 
-                try {
-                    // Ajusta conforme a assinatura da tua ExtracaoDados
-                    ExtracaoDados extrator = new ExtracaoDados();
-                    // Se teu método for sem parâmetro, usa: extrator.carregarDisciplinas();
-                    List<Disciplina> disciplinas =
-                            extrator.carregarDisciplinas(arquivo.getAbsolutePath());
+                // Usa ExtracaoDados normalmente
+                ExtracaoDados extrator = new ExtracaoDados();
+                java.util.List<Disciplina> disciplinas = extrator.carregarDisciplinas(arquivo.getAbsolutePath());
 
-                    controller.turmasCriadas.clear();
-
-                    for (Disciplina d : disciplinas) {
-                        controller.turmasCriadas.addAll(d.getTurmas());
-                    }
-
-                    if (controller.turmasCriadas.isEmpty()) {
-                        JOptionPane.showMessageDialog(painel,
-                                "Nenhuma turma encontrada no CSV.",
-                                "Aviso", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
+                if (disciplinas == null || disciplinas.isEmpty()) {
                     JOptionPane.showMessageDialog(painel,
-                            "CSV carregado com sucesso! Foram lidas "
-                                    + controller.turmasCriadas.size() + " turmas.",
-                            "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-
-                    // Vai direto para tela de preferências
-                    controller.mostrarPreferencias();
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(painel,
-                            "Erro ao carregar CSV:\n" + ex.getMessage(),
-                            "Erro", JOptionPane.ERROR_MESSAGE);
+                            "Nenhuma disciplina encontrada no arquivo selecionado.",
+                            "Aviso",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+
+                //preenche turmasCriadas direto e vai pra Preferências
+                controller.turmasCriadas.clear();
+                for (Disciplina d : disciplinas) {
+                    controller.turmasCriadas.addAll(d.getTurmas());
+                }
+
+                controller.mostrarPreferencias();
             }
         });
 
-        // --- BOTÃO INSERIR MANUALMENTE ---
+        //inserir manualmente
         btnManual.addActionListener(e -> controller.mostrarInsercao());
 
-        gbc.gridx = 0;
-        centro.add(btnCsv, gbc);
-        gbc.gridx = 1;
-        centro.add(btnManual, gbc);
+        //botoes menu
+        botoes.add(btnAluno);
+        botoes.add(btnCsv);
+        botoes.add(btnManual);
+
+        JPanel centro = new JPanel(new GridBagLayout());
+        centro.add(botoes);
 
         painel.add(centro, BorderLayout.CENTER);
 

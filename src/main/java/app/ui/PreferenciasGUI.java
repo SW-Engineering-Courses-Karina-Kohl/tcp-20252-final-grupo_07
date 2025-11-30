@@ -131,7 +131,7 @@ public class PreferenciasGUI {
 
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.setBackground(Color.WHITE);
-        btnVoltar.addActionListener(e -> controller.mostrarMenu());
+        btnVoltar.addActionListener(e -> controller.mostrarMenuInicial());
 
         JButton btnCarregar = new JButton("Carregar preferências");
         btnCarregar.setBackground(Color.WHITE);
