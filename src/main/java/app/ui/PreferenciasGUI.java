@@ -246,6 +246,8 @@ public class PreferenciasGUI {
 
             for (int j = 0; j < colunas; j++) {
                 JCheckBox cb = new JCheckBox();
+                cb.setHorizontalAlignment(SwingConstants.CENTER);
+                cb.setBorderPainted(true);
                 matrizDisponibilidade[i][j] = cb;
                 painel.add(cb);
             }

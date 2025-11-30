@@ -197,7 +197,7 @@ public class GradeGUI {
         String mensagem = //colocar codigo da turma
                 d.getCodigo() + "\n" +
                 d.getNome() + "\n" +
-                "Turma: " + d.getCodigo() + "\n" +
+                "Turma: " + turma.getCodigo() + "\n" +
                 "Professor: " + (p != null ? p.getNome() : "-") + "\n" +
                 "Vagas ofertadas: " + turma.getVagasOfertadas() + "\n" +
                 "Sala: " + turma.getSala() + "\n" +
