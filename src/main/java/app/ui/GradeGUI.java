@@ -65,9 +65,7 @@ public class GradeGUI {
         //botao das preferencias
         JButton btnPreferencias = new JButton("Preferências");
         btnPreferencias.setBackground(Color.WHITE);
-
         btnPreferencias.addActionListener(e -> app.mostrarPreferencias());
-
         painelTopo.add(btnPreferencias);
 
         //botao de adicionar cadeiras manualmente
@@ -149,12 +147,15 @@ public class GradeGUI {
 
                 if (t == null) {
                     JButton vazio = new JButton();
+                    vazio.setPreferredSize(new Dimension(100, 30));
                     vazio.setEnabled(false);
                     painelGrade.add(vazio);
                 } else {
 
                     JButton btnTurmas = new JButton(t.getDisciplina().getNome() + " " + t.getCodigo());
                     Turma turmaRef = t;
+                    btnTurmas.setPreferredSize(new Dimension(100, 30));
+                    btnTurmas.setToolTipText(t.getDisciplina().getNome());
 
                     btnTurmas.setBackground(Color.WHITE);
                     try{//muda as cores do texto dos botoes de acordo com a cor da turma
@@ -197,7 +198,7 @@ public class GradeGUI {
         String mensagem = //colocar codigo da turma
                 d.getCodigo() + "\n" +
                 d.getNome() + "\n" +
-                "Turma: " + d.getCodigo() + "\n" +
+                "Turma: " + turma.getCodigo() + "\n" +
                 "Professor: " + (p != null ? p.getNome() : "-") + "\n" +
                 "Vagas ofertadas: " + turma.getVagasOfertadas() + "\n" +
                 "Sala: " + turma.getSala() + "\n" +

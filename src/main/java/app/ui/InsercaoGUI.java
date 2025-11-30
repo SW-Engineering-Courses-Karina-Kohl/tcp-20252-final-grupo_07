@@ -3,6 +3,8 @@ package app.ui;
 import model.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class InsercaoGUI {
     private static JCheckBox cbQua;
     private static JCheckBox cbQui;
     private static JCheckBox cbSex;
+    private static JCheckBox cbSab;
 
     // Lista de turmas criadas só para exibir na tela
     private static DefaultListModel<String> modeloListaTurmas = new DefaultListModel<>();
@@ -100,11 +103,13 @@ public class InsercaoGUI {
         fieldHoraInicio = new JTextField("08:30");
         fieldHoraFim = new JTextField("10:10");
 
-        cbSeg = new JCheckBox("Segunda");
-        cbTer = new JCheckBox("Terça");
-        cbQua = new JCheckBox("Quarta");
-        cbQui = new JCheckBox("Quinta");
-        cbSex = new JCheckBox("Sexta");
+        cbSeg = new JCheckBox("Seg");
+        cbTer = new JCheckBox("Ter");
+        cbQua = new JCheckBox("Qua");
+        cbQui = new JCheckBox("Qui");
+        cbSex = new JCheckBox("Sex");
+        cbSab = new JCheckBox("Sáb");
+
 
         JPanel painelDias = new JPanel(new GridLayout(1, 5));
         painelDias.add(cbSeg);
@@ -112,6 +117,7 @@ public class InsercaoGUI {
         painelDias.add(cbQua);
         painelDias.add(cbQui);
         painelDias.add(cbSex);
+        painelDias.add(cbSab);
 
         painelHorario.add(new JLabel("Hora início (HH:MM):"));
         painelHorario.add(fieldHoraInicio);
@@ -126,8 +132,7 @@ public class InsercaoGUI {
 
         centro.add(painelForm);
 
-        // ----------- Lado direito: lista das turmas já cadastradas -----------
-
+        //Lado direito -> lista das turmas já cadastradas
         JPanel painelLista = new JPanel(new BorderLayout());
         painelLista.setBorder(BorderFactory.createTitledBorder("Turmas cadastradas (sessão atual)"));
 
@@ -142,19 +147,18 @@ public class InsercaoGUI {
 
         // ====================== RODAPÉ: BOTÕES ===============================
 
-        JPanel painelBotoes = new JPanel();
+        JPanel painelBotoes = new JPanel(new BorderLayout());
 
-        // BOTÃO ADICIONAR TURMA
-        JButton btnAdicionar = new JButton("Adicionar turma");
-        btnAdicionar.setBackground(Color.WHITE);
-        btnAdicionar.addActionListener(e -> adicionarTurma(controller));
-        painelBotoes.add(btnAdicionar);
-
-        // BOTÃO LIMPAR CAMPOS
-        JButton btnLimpar = new JButton("Limpar campos");
-        btnLimpar.setBackground(Color.WHITE);
-        btnLimpar.addActionListener(e -> limparCampos());
-        painelBotoes.add(btnLimpar);
+        //sub-painel para agrupar os botões da esquerda
+        JPanel subPainelEsquerda = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        JButton btnMenu = new JButton("Ir para Menu");
+        btnMenu.setBackground(Color.WHITE);
+        btnMenu.addActionListener(e -> controller.mostrarMenuInicial());
+        
+        JButton btnGrades = new JButton("Ir para grades");
+        btnGrades.setBackground(Color.WHITE);
+        btnGrades.addActionListener(e -> controller.gerarGrades());
 
         // BOTÃO IR PARA PREFERÊNCIAS
         JButton btnIrPreferencias = new JButton("Ir para preferências");
@@ -168,8 +172,29 @@ public class InsercaoGUI {
             }
             controller.mostrarPreferencias();
         });
-        painelBotoes.add(btnIrPreferencias);
 
+        subPainelEsquerda.add(btnIrPreferencias);
+        subPainelEsquerda.add(btnMenu);
+        subPainelEsquerda.add(btnGrades);
+
+        //Adiciona sub-painel na região oeste do painel principal
+        painelBotoes.add(subPainelEsquerda, BorderLayout.WEST);
+
+        JPanel subPainelDireita = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        // BOTÃO ADICIONAR TURMA
+        JButton btnAdicionar = new JButton("Adicionar turma");
+        btnAdicionar.setBackground(Color.WHITE);
+        btnAdicionar.addActionListener(e -> adicionarTurma(controller));
+        subPainelDireita.add(btnAdicionar);
+
+        // BOTÃO LIMPAR CAMPOS
+        JButton btnLimpar = new JButton("Limpar campos");
+        btnLimpar.setBackground(Color.WHITE);
+        btnLimpar.addActionListener(e -> limparCampos());
+        subPainelDireita.add(btnLimpar);
+
+        painelBotoes.add(subPainelDireita, BorderLayout.EAST);
         painel.add(painelBotoes, BorderLayout.SOUTH);
 
         return painel;
@@ -215,6 +240,7 @@ public class InsercaoGUI {
             if (cbQua.isSelected()) diasSelecionados.add(DiaSemana.QUARTA);
             if (cbQui.isSelected()) diasSelecionados.add(DiaSemana.QUINTA);
             if (cbSex.isSelected()) diasSelecionados.add(DiaSemana.SEXTA);
+            if (cbSab.isSelected()) diasSelecionados.add(DiaSemana.SABADO);
 
             if (diasSelecionados.isEmpty()) {
                 JOptionPane.showMessageDialog(null,
@@ -290,5 +316,6 @@ public class InsercaoGUI {
         cbQua.setSelected(false);
         cbQui.setSelected(false);
         cbSex.setSelected(false);
+        cbSab.setSelected(false);
     }
 }

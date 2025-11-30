@@ -11,7 +11,6 @@ import model.Disciplina;
 
 public class SelecaoDisciplinasGUI {
 
-    // componentes que vamos reutilizar
     private static JPanel painelLista;
     private static Map<String, Disciplina> mapaLabelDisciplina = new LinkedHashMap<>();
     private static List<JCheckBox> checkBoxes = new ArrayList<>();
