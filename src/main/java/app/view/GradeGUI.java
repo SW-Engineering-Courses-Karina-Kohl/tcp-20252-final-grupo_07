@@ -1,6 +1,9 @@
-package app.ui;
+package app.view;
 
 import javax.swing.*;
+
+import app.controller.AppController;
+
 import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
@@ -51,7 +54,7 @@ public class GradeGUI {
         painelTopo.removeAll();
         painelGrade.removeAll();
 
-        grades = app.gradesGeradas;
+        grades = app.getGradesGeradas();
 
         if (grades == null || grades.isEmpty()) {
             painelTopo.add(new JLabel("Nenhuma grade gerada ainda."));

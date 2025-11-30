@@ -1,8 +1,11 @@
-package app.ui;
+package app.view;
 
 import model.*;
 
 import javax.swing.*;
+
+import app.controller.AppController;
+
 import java.awt.*;
 import java.time.LocalTime;
 import java.util.*;
@@ -155,10 +158,10 @@ public class PreferenciasGUI {
         btnGerar.setBackground(Color.WHITE);
         btnGerar.addActionListener(e -> {
 
-            if (controller.turmasCriadas.isEmpty()) {
+            if (!controller.temTurmas()) {
                 JOptionPane.showMessageDialog(painel,
-                        "Nenhuma turma cadastrada (CSV ou manual).",
-                        "Erro", JOptionPane.ERROR_MESSAGE);
+                "Nenhuma turma cadastrada (CSV ou manual).",
+                "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -200,7 +203,7 @@ public class PreferenciasGUI {
             }
 
             //salva no controller
-            controller.preferencias = prefs;
+            controller.definirPreferencias(prefs);
 
             // salva no CSV
             GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
@@ -283,7 +286,7 @@ public class PreferenciasGUI {
 
         Set<String> nomesProfessores = new TreeSet<>();
 
-        for (Turma t : controller.turmasCriadas) {
+        for (Turma t : controller.getTurmas()) {
             if (t.getProfessor() != null) {
                 nomesProfessores.add(t.getProfessor().getNome().trim());
             }

@@ -1,8 +1,10 @@
-package app.ui;
+package app.view;
 
 import model.*;
 
 import javax.swing.*;
+
+import app.controller.AppController;
 
 import java.awt.*;
 import java.time.LocalTime;
@@ -163,7 +165,7 @@ public class InsercaoGUI {
         JButton btnIrPreferencias = new JButton("Ir para preferências");
         btnIrPreferencias.setBackground(Color.WHITE);
         btnIrPreferencias.addActionListener(e -> {
-            if (controller.turmasCriadas.isEmpty()) {
+            if (controller.getTurmas().isEmpty()) {
                 JOptionPane.showMessageDialog(painel,
                         "Cadastre pelo menos uma turma antes de continuar.",
                         "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -250,7 +252,7 @@ public class InsercaoGUI {
 
             // Reaproveita disciplina se já existir nas turmas criadas
             Disciplina disciplina = null;
-            for (Turma t : controller.turmasCriadas) {
+            for (Turma t : controller.getTurmas()) {
                 if (t.getDisciplina().getCodigo().equalsIgnoreCase(codDisc)) {
                     disciplina = t.getDisciplina();
                     break;
@@ -272,7 +274,7 @@ public class InsercaoGUI {
             disciplina.adicionarTurma(turma);
 
             // adiciona ao controlador (backend global)
-            controller.turmasCriadas.add(turma);
+            controller.adicionarTurma(turma);
 
             // adiciona na lista visual
             modeloListaTurmas.addElement(

@@ -1,11 +1,12 @@
-package app.ui;
+package app.view;
 
 import javax.swing.*;
+
+import app.controller.AppController;
+
 import java.awt.*;
 import java.io.File;
 
-import model.Disciplina;
-import model.ExtracaoDados;
 
 public class MenuInicialGUI {
 
@@ -28,31 +29,12 @@ public class MenuInicialGUI {
         btnAluno.addActionListener(e -> controller.iniciarFluxoAlunoUfrgs());
 
         //carregar csv generico
-        btnCsv.addActionListener(e -> {
+       btnCsv.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             int res = chooser.showOpenDialog(painel);
             if (res == JFileChooser.APPROVE_OPTION) {
                 File arquivo = chooser.getSelectedFile();
-
-                // Usa ExtracaoDados normalmente
-                ExtracaoDados extrator = new ExtracaoDados();
-                java.util.List<Disciplina> disciplinas = extrator.carregarDisciplinas(arquivo.getAbsolutePath());
-
-                if (disciplinas == null || disciplinas.isEmpty()) {
-                    JOptionPane.showMessageDialog(painel,
-                            "Nenhuma disciplina encontrada no arquivo selecionado.",
-                            "Aviso",
-                            JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                //preenche turmasCriadas direto e vai pra Preferências
-                controller.turmasCriadas.clear();
-                for (Disciplina d : disciplinas) {
-                    controller.turmasCriadas.addAll(d.getTurmas());
-                }
-
-                controller.mostrarPreferencias();
+                controller.carregarTurmasDeCsv(arquivo.getAbsolutePath());
             }
         });
 

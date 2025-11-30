@@ -1,6 +1,9 @@
-package app.ui;
+package app.view;
 
 import javax.swing.*;
+
+import app.controller.AppController;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -80,7 +83,7 @@ public class SelecaoDisciplinasGUI {
         mapaLabelDisciplina.clear();
         checkBoxes.clear();
 
-        for (Disciplina d : controller.disciplinasCarregadas) {
+        for (Disciplina d : controller.getDisciplinasCarregadas()) {
             String label = d.getCodigo() + " - " + d.getNome();
 
             if (!mapaLabelDisciplina.containsKey(label)) {
