@@ -1,8 +1,12 @@
-package app.ui;
+package app.view;
 
 import javax.swing.*;
+
+import app.controller.AppController;
+
 import java.awt.*;
 import java.awt.event.HierarchyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.*;
@@ -50,7 +54,7 @@ public class GradeGUI {
         painelTopo.removeAll();
         painelGrade.removeAll();
 
-        grades = app.gradesGeradas;
+        grades = app.getGradesGeradas();
 
         if (grades == null || grades.isEmpty()) {
             painelTopo.add(new JLabel("Nenhuma grade gerada ainda."));
@@ -61,28 +65,15 @@ public class GradeGUI {
 
         gradeAtual = grades.get(0);
 
-
-        for (int i = 0; i < grades.size(); i++) {
-
-            final int idx = i;
-            JButton btn = new JButton("Grade " + (i + 1));
-
-            btn.addActionListener(e -> {
-                gradeAtual = grades.get(idx);
-                desenharGrade(gradeAtual);
-            });
-
-            painelTopo.add(btn);
-        }
-
-
-        JButton btnPreferencias = new JButton("Preferencias");
+        //botao das preferencias
+        JButton btnPreferencias = new JButton("Preferências");
+        btnPreferencias.setBackground(Color.WHITE);
         btnPreferencias.addActionListener(e -> app.mostrarPreferencias());
-
         painelTopo.add(btnPreferencias);
 
-
+        //botao de adicionar cadeiras manualmente
         JButton btnAdicionar = new JButton("+");
+        btnAdicionar.setBackground(Color.WHITE);
         btnAdicionar.addActionListener(e -> app.mostrarInsercao());
 
         painelTopo.add(btnAdicionar);
@@ -92,8 +83,32 @@ public class GradeGUI {
 
 
         desenharGrade(gradeAtual);
-    }
 
+        //botoes das grades (grade 1, grade 2...)
+        List<JButton> listaBotoes = new ArrayList<>();
+        for (int i = 0; i < grades.size(); i++) {
+            final int idx = i;
+            JButton btnIndexGrades = new JButton("Grade " + (i + 1));
+            btnIndexGrades.setBackground(Color.WHITE);
+            listaBotoes.add(btnIndexGrades);
+
+            btnIndexGrades.addActionListener(e -> {
+                for(int j=0; j < listaBotoes.size(); j++){
+                    listaBotoes.get(j).setBackground(Color.WHITE);
+                }
+
+                gradeAtual = grades.get(idx);
+                btnIndexGrades.setBackground(new Color(210,210,210));
+                desenharGrade(gradeAtual);
+            });
+
+            painelTopo.add(btnIndexGrades);
+        }
+        //Faz botão Grade 1 começar selecionado por default
+        if (!listaBotoes.isEmpty()) {
+           listaBotoes.get(0).setBackground(new Color(210,210,210));
+        }
+    }
 
     private static void desenharGrade(Grade grade) {
 
@@ -127,7 +142,7 @@ public class GradeGUI {
         for (int i = 0; i < HORAS; i++) {
 
             int hora = 7 + i;
-            painelGrade.add(new JLabel(hora + ":00", JLabel.CENTER));
+            painelGrade.add(new JLabel(hora + ":30", JLabel.CENTER));
 
             for (int j = 0; j < DIAS; j++) {
 
@@ -135,16 +150,28 @@ public class GradeGUI {
 
                 if (t == null) {
                     JButton vazio = new JButton();
+                    vazio.setPreferredSize(new Dimension(100, 30));
                     vazio.setEnabled(false);
                     painelGrade.add(vazio);
                 } else {
 
-                    JButton btn = new JButton(t.getDisciplina().getNome());
+                    JButton btnTurmas = new JButton(t.getDisciplina().getNome() + " " + t.getCodigo());
                     Turma turmaRef = t;
+                    btnTurmas.setPreferredSize(new Dimension(100, 30));
+                    btnTurmas.setToolTipText(t.getDisciplina().getNome());
 
-                    btn.addActionListener(e -> mostrarInfoTurma(turmaRef));
+                    btnTurmas.setBackground(Color.WHITE);
+                    try{//muda as cores do texto dos botoes de acordo com a cor da turma
+                        Color corTurma = Color.decode(t.getCor());
+                        btnTurmas.setForeground(corTurma.darker()); //darker garante que fica legivel com fundo branco                    
+                    }catch(NumberFormatException e){
+                        btnTurmas.setForeground(Color.BLACK);
+                        System.out.println("erro atribuindo as cores");
+                    }
 
-                    painelGrade.add(btn);
+                    btnTurmas.addActionListener(e -> mostrarInfoTurma(turmaRef));
+
+                    painelGrade.add(btnTurmas);
                 }
             }
         }
@@ -171,9 +198,10 @@ public class GradeGUI {
         Disciplina d = turma.getDisciplina();
         Professor p = turma.getProfessor();
 
-        String mensagem =
+        String mensagem = //colocar codigo da turma
                 d.getCodigo() + "\n" +
                 d.getNome() + "\n" +
+                "Turma: " + turma.getCodigo() + "\n" +
                 "Professor: " + (p != null ? p.getNome() : "-") + "\n" +
                 "Vagas ofertadas: " + turma.getVagasOfertadas() + "\n" +
                 "Sala: " + turma.getSala() + "\n" +
@@ -182,7 +210,7 @@ public class GradeGUI {
         JOptionPane.showMessageDialog(
                 null,
                 mensagem,
-                "Informacoes da Turma",
+                "Informações da Turma",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }

@@ -26,6 +26,7 @@ replay_pid*
 # Ignora arquivos gerados pelo Gradle
 .gradle/
 build/
+bin/
 
 # Ignora arquivos de configuração do IDE
 .vscode/
