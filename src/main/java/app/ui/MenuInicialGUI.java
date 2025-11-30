@@ -2,7 +2,6 @@ package app.ui;
 
 import model.Disciplina;
 import model.ExtracaoDados;
-import model.Turma;
 
 import javax.swing.*;
 import java.awt.*;

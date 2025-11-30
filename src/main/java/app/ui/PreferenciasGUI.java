@@ -129,9 +129,9 @@ public class PreferenciasGUI {
         //botoes
         JPanel painelBotoes = new JPanel();
 
-        JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.setBackground(Color.WHITE);
-        btnVoltar.addActionListener(e -> controller.mostrarMenu());
+        JButton btnMenu = new JButton("Menu");
+        btnMenu.setBackground(Color.WHITE);
+        btnMenu.addActionListener(e -> controller.mostrarMenu());
 
         JButton btnCarregar = new JButton("Carregar preferências");
         btnCarregar.setBackground(Color.WHITE);
@@ -208,7 +208,7 @@ public class PreferenciasGUI {
             controller.gerarGrades();
         });
 
-        painelBotoes.add(btnVoltar);
+        painelBotoes.add(btnMenu);
         painelBotoes.add(btnCarregar);
         painelBotoes.add(btnLimpar);
         painelBotoes.add(btnGerar);
@@ -220,7 +220,7 @@ public class PreferenciasGUI {
 
     // matriz de horários bloqueados
     private static JPanel criarPainelHorarios() {
-        String[] dias = {"SEG", "TER", "QUA", "QUI", "SEX"};
+        String[] dias = {"SEG", "TER", "QUA", "QUI", "SEX", "SÁB"};
 
         String[] horariosLabel = {
                 "08:30", "10:30", "13:30", "15:30",
