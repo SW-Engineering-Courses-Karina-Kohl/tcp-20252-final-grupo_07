@@ -130,12 +130,15 @@ public class PreferenciasGUI {
         JPanel painelBotoes = new JPanel();
 
         JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.setBackground(Color.WHITE);
         btnVoltar.addActionListener(e -> controller.mostrarMenu());
 
         JButton btnCarregar = new JButton("Carregar preferências");
+        btnCarregar.setBackground(Color.WHITE);
         btnCarregar.addActionListener(e -> carregarPreferenciasNaTela(controller));
 
         JButton btnLimpar = new JButton("Limpar preferências");
+        btnLimpar.setBackground(Color.WHITE);
         btnLimpar.addActionListener(e -> {
             Preferencias vazias = new Preferencias(); // construtor zera listas e usa defaults
             aplicarPreferenciasNaTela(controller, vazias);
@@ -148,6 +151,7 @@ public class PreferenciasGUI {
         });
 
         JButton btnGerar = new JButton("Gerar grades");
+        btnGerar.setBackground(Color.WHITE);
         btnGerar.addActionListener(e -> {
 
             if (controller.turmasCriadas.isEmpty()) {

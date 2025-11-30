@@ -146,16 +146,19 @@ public class InsercaoGUI {
 
         // BOTÃO ADICIONAR TURMA
         JButton btnAdicionar = new JButton("Adicionar turma");
+        btnAdicionar.setBackground(Color.WHITE);
         btnAdicionar.addActionListener(e -> adicionarTurma(controller));
         painelBotoes.add(btnAdicionar);
 
         // BOTÃO LIMPAR CAMPOS
         JButton btnLimpar = new JButton("Limpar campos");
+        btnLimpar.setBackground(Color.WHITE);
         btnLimpar.addActionListener(e -> limparCampos());
         painelBotoes.add(btnLimpar);
 
         // BOTÃO IR PARA PREFERÊNCIAS
         JButton btnIrPreferencias = new JButton("Ir para preferências");
+        btnIrPreferencias.setBackground(Color.WHITE);
         btnIrPreferencias.addActionListener(e -> {
             if (controller.turmasCriadas.isEmpty()) {
                 JOptionPane.showMessageDialog(painel,
