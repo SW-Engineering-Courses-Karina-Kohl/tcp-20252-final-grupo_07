@@ -41,8 +41,8 @@ public class InsercaoGUI {
         JPanel painel = new JPanel(new BorderLayout());
         painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel titulo = new JLabel("Inserção manual de disciplinas e turmas", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 22));
+        JLabel titulo = new JLabel("Insercao manual de disciplinas e turmas", SwingConstants.CENTER);
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 22));
         titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
         painel.add(titulo, BorderLayout.NORTH);
 
@@ -162,7 +162,7 @@ public class InsercaoGUI {
         btnGrades.addActionListener(e -> controller.gerarGrades());
 
         // BOTÃO IR PARA PREFERÊNCIAS
-        JButton btnIrPreferencias = new JButton("Ir para preferências");
+        JButton btnIrPreferencias = new JButton("Ir para preferencias");
         btnIrPreferencias.setBackground(Color.WHITE);
         btnIrPreferencias.addActionListener(e -> {
             if (controller.getTurmas().isEmpty()) {

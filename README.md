@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="logo.gif" height="140" />
-</p>
-
-<h1 align="center">Matriculador MMB9K</h1>
+<h1 align="center">Matriculador INF/UFRGS</h1>
 
 <p align="center">
   Geração automática de grades • MVC • Java • Swing
@@ -17,7 +13,7 @@
 ---
 
 ## Descrição do Projeto
-O **Matriculador MMB9K** é uma aplicação em Java desenvolvida para auxiliar estudantes na montagem de seus horários.  
+O **Matriculador INF/UFRGS** é uma aplicação em Java desenvolvida para auxiliar estudantes na montagem de seus horários.  
 
 O sistema permite:
 

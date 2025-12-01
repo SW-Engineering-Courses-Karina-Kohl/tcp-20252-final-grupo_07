@@ -7,6 +7,8 @@ import javax.swing.*;
 import app.controller.AppController;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
@@ -61,12 +63,13 @@ public class PreferenciasGUI {
     private static JRadioButton rbManha;
     private static JRadioButton rbTarde;
     private static JRadioButton rbNoite;
+    private static ButtonGroup grupoTurno;
     private static JSpinner spinnerNumCad;
 
     public static JPanel criarTela(AppController controller) {
         JPanel painel = new JPanel(new BorderLayout());
 
-        JLabel titulo = new JLabel("Preferências do Usuário", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("Preferencias do Usuario", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 22));
         titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         painel.add(titulo, BorderLayout.NORTH);
@@ -87,14 +90,36 @@ public class PreferenciasGUI {
         rbManha = new JRadioButton("Manhã");
         rbTarde = new JRadioButton("Tarde");
         rbNoite = new JRadioButton("Noite");
-
-        //define manha como default turno preferido 
-        rbManha.setSelected(true);
         
-        ButtonGroup grupoTurno = new ButtonGroup();
+        grupoTurno = new ButtonGroup();
         grupoTurno.add(rbManha);
         grupoTurno.add(rbTarde);
         grupoTurno.add(rbNoite);
+
+        MouseAdapter toggleListener = new MouseAdapter() {
+            boolean estavaSelecionado = false; 
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JRadioButton btn = (JRadioButton) e.getSource();
+                estavaSelecionado = btn.isSelected();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                JRadioButton btn = (JRadioButton) e.getSource();
+                //limpa apenas se click do mouse foi solto dentro do btn
+                if (estavaSelecionado && btn.contains(e.getPoint())) {
+                    grupoTurno.clearSelection();
+                }
+            }
+        };
+
+        // Adiciona esse comportamento aos 3 botões
+        rbManha.addMouseListener(toggleListener);
+        rbTarde.addMouseListener(toggleListener);
+        rbNoite.addMouseListener(toggleListener);
+
         painelTurno.add(rbManha);
         painelTurno.add(rbTarde);
         painelTurno.add(rbNoite);
@@ -103,7 +128,7 @@ public class PreferenciasGUI {
 
         //num cadeiras
         JPanel painelNumCad = new JPanel();
-        painelNumCad.setBorder(BorderFactory.createTitledBorder("Número de disciplinas desejado (use as setinhas)"));
+        painelNumCad.setBorder(BorderFactory.createTitledBorder("Numero de disciplinas desejado (use as setinhas)"));
         spinnerNumCad = new JSpinner(new SpinnerNumberModel(1, 1, controller.getNumDisciplinas(), 1));
         painelNumCad.add(spinnerNumCad);
         painelDireito.add(painelNumCad);
@@ -241,7 +266,7 @@ public class PreferenciasGUI {
         matrizDisponibilidade = new JCheckBox[linhas][colunas];
 
         JPanel painel = new JPanel(new GridLayout(linhas + 1, colunas + 1));
-        painel.setBorder(BorderFactory.createTitledBorder("Marque os horários em que NÃO deseja ter aula"));
+        painel.setBorder(BorderFactory.createTitledBorder("Marque os horarios em que NAO deseja ter aula"));
 
         painel.add(new JLabel("")); // canto vazio
 
@@ -339,37 +364,33 @@ public class PreferenciasGUI {
 
     //carregar preferências do CSV e jogar na tela 
     private static void carregarPreferenciasNaTela(AppController controller) {
+        GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
+        Preferencias prefs = ger.carregarPreferencias(CAMINHO_PREFS);
 
-    GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
-    Preferencias prefs = ger.carregarPreferencias(CAMINHO_PREFS);
+        //verifica se o arquivo existe e ta vazio
+        boolean semTurno = (prefs.getTurnoPreferido() == null);
+        boolean semProfPref = prefs.getProfessoresPreferidos().isEmpty();
+        boolean semProfEv = prefs.getProfessoresEvitados().isEmpty();
+        boolean semHorarios = prefs.getHorariosBloqueados().isEmpty();
+        boolean numCadeirasZerado = prefs.getNumeroDisciplinas() <= 0;
 
-    //verifica se o arquivo existe e ta vazio
-    boolean semTurno = (prefs.getTurnoPreferido() == null);
-    boolean semProfPref = prefs.getProfessoresPreferidos().isEmpty();
-    boolean semProfEv = prefs.getProfessoresEvitados().isEmpty();
-    boolean semHorarios = prefs.getHorariosBloqueados().isEmpty();
-    boolean numCadeirasZerado = prefs.getNumeroDisciplinas() <= 0;
+        boolean arquivoVazio =
+                semTurno && semProfPref && semProfEv && semHorarios && numCadeirasZerado;
 
-    boolean arquivoVazio =
-            semTurno && semProfPref && semProfEv && semHorarios && numCadeirasZerado;
-
-    if (arquivoVazio) {
-        JOptionPane.showMessageDialog(null,
-                "Nenhuma preferência salva encontrada.",
-                "Aviso",
-                JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
-
-    //se tiver preferencia aplica
-    aplicarPreferenciasNaTela(controller, prefs);
+        if (arquivoVazio) {
+            JOptionPane.showMessageDialog(null,
+                    "Nenhuma preferência salva encontrada.",
+                    "Aviso",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        //se tiver preferencia aplica
+        aplicarPreferenciasNaTela(controller, prefs);
 }
 
     private static void aplicarPreferenciasNaTela(AppController controller, Preferencias prefs) {
         //turno preferido
-        rbManha.setSelected(false);
-        rbTarde.setSelected(false);
-        rbNoite.setSelected(false);
+        grupoTurno.clearSelection();
 
         if (prefs.getTurnoPreferido() != null) {
             switch (prefs.getTurnoPreferido()) {

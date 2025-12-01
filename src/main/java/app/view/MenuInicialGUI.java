@@ -14,7 +14,7 @@ public class MenuInicialGUI {
         JPanel painel = new JPanel(new BorderLayout());
         painel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = new JLabel("Matriculador Master Blaster 9000", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("MATRICULADOR INF/UFRGS", SwingConstants.CENTER);
         titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 32f));
 
         JPanel botoes = new JPanel();
@@ -30,8 +30,8 @@ public class MenuInicialGUI {
         JButton btnManual = new JButton("Inserir manualmente");
 
         //carregar csv aluno inf
-        btnAlunoCIC.addActionListener(e -> controller.iniciarFluxoAlunoUfrgs("ofertas_cic.csv"));
-        btnAlunoECP.addActionListener(e -> controller.iniciarFluxoAlunoUfrgs("ofertas_ecp.csv"));
+        btnAlunoCIC.addActionListener(e -> controller.carregarTurmasDeCsv("ofertas_cic.csv"));
+        btnAlunoECP.addActionListener(e -> controller.carregarTurmasDeCsv("ofertas_ecp.csv"));
 
         //carregar csv generico
        btnCsv.addActionListener(e -> {

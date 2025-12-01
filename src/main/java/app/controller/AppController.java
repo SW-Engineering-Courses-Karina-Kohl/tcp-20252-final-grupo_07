@@ -33,7 +33,7 @@ public class AppController {
     private List<Disciplina> disciplinasCarregadas = new ArrayList<>();
 
     public AppController() {
-        frame = new JFrame("Matriculador Master Blaster 9000");
+        frame = new JFrame("MATRICULADOR INF/UFRGS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 650);
         frame.setLocationRelativeTo(null);
@@ -86,23 +86,28 @@ public class AppController {
         this.preferencias = prefs;
     }
 
-    // Calcula na hora quais disciplinas existem baseadas nas turmas cadastradas
+    //Disciplinas existem baseadas nas turmas lidas pelo arquivo
     public List<Disciplina> getDisciplinasCarregadas() {
-        List<Disciplina> disciplinasUnicas = new ArrayList<>();
+        return new ArrayList<>(disciplinasCarregadas);
+    }
+
+    ////Disciplinas existem baseadas nas turmas lidas selecionadas pelo usuário
+    public List<Disciplina> getDisciplinasSelecionadas() {
+        List<Disciplina> disciplinasSelecionadas = new ArrayList<>();
         List<String> codigosVistos = new ArrayList<>();
 
         for (Turma t : turmasCriadas) {
             Disciplina d = t.getDisciplina();
             if (d != null && !codigosVistos.contains(d.getCodigo())) {
-                disciplinasUnicas.add(d);
+                disciplinasSelecionadas.add(d);
                 codigosVistos.add(d.getCodigo());
             }
         }
-        return disciplinasUnicas;
+        return disciplinasSelecionadas;
     }
 
     public int getNumDisciplinas() {
-        int quant = getDisciplinasCarregadas().size();
+        int quant = getDisciplinasSelecionadas().size();
         if (quant == 0)
             quant = 1;
         return quant; //retorna 1 se vazio para nao quebrar o spinner nas preferencias
@@ -128,7 +133,8 @@ public class AppController {
     //-------------------------------------------------------------------------
     //fluxo de carregamento csv e aluno inf
     ///-------------------------------------------------------------------------
-    public void iniciarFluxoAlunoUfrgs(String caminho) {
+     
+    /*public void iniciarFluxoAlunoUfrgs(String caminho) {
         ExtracaoDados extrator = new ExtracaoDados();
         disciplinasCarregadas = extrator.carregarDisciplinas(caminho);
 
@@ -141,12 +147,13 @@ public class AppController {
             return;
         }
         mostrarSelecaoDisciplinas();
-    }
-
+    } */
+    
     //usuario escohe o arquivo no proprio pc
     public void carregarTurmasDeCsv(String caminhoArquivo) {
         ExtracaoDados extrator = new ExtracaoDados();
         List<Disciplina> disciplinas = extrator.carregarDisciplinas(caminhoArquivo);
+
         if (disciplinas == null || disciplinas.isEmpty()) {
             JOptionPane.showMessageDialog(frame,
                     "Não foi possível carregar disciplinas do arquivo selecionado.",
@@ -154,6 +161,8 @@ public class AppController {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        disciplinasCarregadas = new ArrayList<>(disciplinas);
 
         // a partir das disciplinas, pega todas as turmas
         turmasCriadas.clear();
