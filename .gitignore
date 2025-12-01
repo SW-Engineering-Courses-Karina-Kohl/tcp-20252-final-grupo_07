@@ -22,3 +22,18 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Ignora arquivos gerados pelo Gradle
+.gradle/
+build/
+bin/
+
+# Ignora arquivos de configuração do IDE
+.vscode/
+
+# app specific
+preferencias.csv
+
+# Mantem o wrapper do Gradle
+!gradle-wrapper.jar
+
