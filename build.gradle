@@ -31,6 +31,19 @@ dependencies {
 
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'app.Main'
+    }
+
+    // This includes the Log4j dependencies inside the JAR so it can run standalone
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 test {
     useJUnitPlatform()
 }
