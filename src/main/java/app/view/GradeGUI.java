@@ -1,5 +1,4 @@
 package app.view;
-
 import javax.swing.*;
 
 import app.controller.AppController;
@@ -29,7 +28,10 @@ public class GradeGUI {
         painelTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        root.add(painelTopo, BorderLayout.NORTH);
+        //barra de scroll dos botoes do painel de topo
+        JScrollPane scrollpainelTopo = new JScrollPane(painelTopo);
+        root.add(scrollpainelTopo, BorderLayout.NORTH);
+        scrollpainelTopo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
         painelGrade = new JPanel();
         painelGrade.setLayout(new GridLayout(HORAS + 1, DIAS + 1, 5, 5));
@@ -158,7 +160,7 @@ public class GradeGUI {
                     JButton btnTurmas = new JButton(t.getDisciplina().getNome() + " " + t.getCodigo());
                     Turma turmaRef = t;
                     btnTurmas.setPreferredSize(new Dimension(100, 30));
-                    btnTurmas.setToolTipText(t.getDisciplina().getNome());
+                    btnTurmas.setToolTipText(t.getDisciplina().getNome() + " " + t.getCodigo());
 
                     btnTurmas.setBackground(Color.WHITE);
                     try{//muda as cores do texto dos botoes de acordo com a cor da turma

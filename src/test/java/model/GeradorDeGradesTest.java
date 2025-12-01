@@ -23,7 +23,7 @@ public class GeradorDeGradesTest {
     void setup() {
         disciplinas = new ArrayList<>();
         preferencias = new Preferencias();
-        preferencias.setNumeroCadeiras(2);
+        preferencias.setNumeroDisciplinas(2);
 
         logger.info("Setup inicial feito para o teste.");
     }

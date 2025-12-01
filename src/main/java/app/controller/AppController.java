@@ -86,27 +86,31 @@ public class AppController {
         this.preferencias = prefs;
     }
 
+    // Calcula na hora quais disciplinas existem baseadas nas turmas cadastradas
     public List<Disciplina> getDisciplinasCarregadas() {
-        return new ArrayList<>(disciplinasCarregadas);
-    }
+        List<Disciplina> disciplinasUnicas = new ArrayList<>();
+        List<String> codigosVistos = new ArrayList<>();
 
-    public void definirDisciplinasCarregadas(List<Disciplina> disciplinas) {
-        if (disciplinas == null) {
-            this.disciplinasCarregadas = new ArrayList<>();
-        } else {
-            this.disciplinasCarregadas = new ArrayList<>(disciplinas);
+        for (Turma t : turmasCriadas) {
+            Disciplina d = t.getDisciplina();
+            if (d != null && !codigosVistos.contains(d.getCodigo())) {
+                disciplinasUnicas.add(d);
+                codigosVistos.add(d.getCodigo());
+            }
         }
+        return disciplinasUnicas;
     }
 
-    //navegacao entre as telas
-
-    public void mostrarMenuInicial() {
-        layout.show(container, "MENU");
+    public int getNumDisciplinas() {
+        int quant = getDisciplinasCarregadas().size();
+        if (quant == 0)
+            quant = 1;
+        return quant; //retorna 1 se vazio para nao quebrar o spinner nas preferencias
     }
 
-    public void mostrarInsercao() {
-        layout.show(container, "INSERCAO");
-    }
+    public void mostrarMenuInicial() {layout.show(container, "MENU");}
+
+    public void mostrarInsercao() {layout.show(container, "INSERCAO");}
 
     public void mostrarPreferencias() {
         //atualiza lista de professores com base nas turmas atuais
@@ -114,18 +118,17 @@ public class AppController {
         layout.show(container, "PREFERENCIAS");
     }
 
-    public void mostrarGrade() {
-        layout.show(container, "GRADE");
-    }
+    public void mostrarGrade() {layout.show(container, "GRADE");}
 
     public void mostrarSelecaoDisciplinas() {
         SelecaoDisciplinasGUI.atualizarLista(this);
         layout.show(container, "SELEC_DISC");
     }
 
+    //-------------------------------------------------------------------------
     //fluxo de carregamento csv e aluno inf
-
-    public void iniciarFluxoAlunoUfrgs() {
+    ///-------------------------------------------------------------------------
+    public void iniciarFluxoAlunoUfrgs() {//apagar!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String caminho = "aluno.csv"; //arquivo padrao
 
         ExtracaoDados extrator = new ExtracaoDados();
@@ -139,7 +142,6 @@ public class AppController {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         mostrarSelecaoDisciplinas();
     }
 
@@ -147,7 +149,6 @@ public class AppController {
     public void carregarTurmasDeCsv(String caminhoArquivo) {
         ExtracaoDados extrator = new ExtracaoDados();
         List<Disciplina> disciplinas = extrator.carregarDisciplinas(caminhoArquivo);
-
         if (disciplinas == null || disciplinas.isEmpty()) {
             JOptionPane.showMessageDialog(frame,
                     "Não foi possível carregar disciplinas do arquivo selecionado.",
@@ -163,12 +164,11 @@ public class AppController {
                 turmasCriadas.addAll(d.getTurmas());
             }
         }
-
         //vai direto para a tela de preferências
         mostrarPreferencias();
     }
 
-    //chamado depois da tela de seleção de disciplinas (Aluno INF)
+    //chamado depois da tela de seleção de disciplinas (Aluno INF) //apagar!!!!!!!!!!!!!!!!!!!!!
     public void definirDisciplinasSelecionadas(List<Disciplina> selecionadas) {
         turmasCriadas.clear();
 
@@ -179,13 +179,10 @@ public class AppController {
                 }
             }
         }
-
         mostrarPreferencias();
     }
 
-
     public void gerarGrades() {
-
         if (preferencias == null) {
             JOptionPane.showMessageDialog(frame,
                     "Erro: Nenhuma preferência definida.",
@@ -200,7 +197,24 @@ public class AppController {
             return;
         }
 
-        //converte lista de turmas em lista de disciplinas (agrupando por código)
+        List<Disciplina> DIsciplinasOrganizadas = organizaTurmasEmDisciplinas();
+        GeradorDeGrades gerador = new GeradorDeGrades(DIsciplinasOrganizadas, preferencias);
+        gerador.gerarGrades();
+
+        gradesGeradas.clear();
+        gradesGeradas.addAll(gerador.getGrades());
+
+        if (gradesGeradas.isEmpty()) {
+            JOptionPane.showMessageDialog(frame,
+                    "Nenhuma grade possível com as restrições.",
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        mostrarGrade();
+    }
+
+    //converte lista de turmas em lista de disciplinas (agrupando por código)
+    private List<Disciplina> organizaTurmasEmDisciplinas(){
         List<Disciplina> disciplinas = new ArrayList<>();
 
         for (Turma t : turmasCriadas) {
@@ -208,9 +222,9 @@ public class AppController {
             if (d == null) continue;
 
             Disciplina existente = null;
-            for (Disciplina dx : disciplinas) {
-                if (dx.getCodigo().equals(d.getCodigo())) {
-                    existente = dx;
+            for (Disciplina disciplina : disciplinas) {
+                if (disciplina.getCodigo().equals(d.getCodigo())) {
+                    existente = disciplina;
                     break;
                 }
             }
@@ -224,20 +238,6 @@ public class AppController {
                 existente.getTurmas().add(t);
             }
         }
-
-        GeradorDeGrades gerador = new GeradorDeGrades(disciplinas, preferencias);
-        gerador.gerarGrades();
-
-        gradesGeradas.clear();
-        gradesGeradas.addAll(gerador.getGrades());
-
-        if (gradesGeradas.isEmpty()) {
-            JOptionPane.showMessageDialog(frame,
-                    "Nenhuma grade possível com as restrições.",
-                    "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        mostrarGrade();
+        return disciplinas;   
     }
 }

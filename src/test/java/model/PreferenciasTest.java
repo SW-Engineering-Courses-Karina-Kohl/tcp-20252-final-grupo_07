@@ -27,7 +27,7 @@ public class PreferenciasTest {
         assertTrue(preferencias.getProfessoresEvitados().isEmpty());
         assertTrue(preferencias.getHorariosBloqueados().isEmpty());
 
-        assertEquals(0, preferencias.getNumeroCadeiras());
+        assertEquals(0, preferencias.getNumeroDisciplinas());
 
         logger.info("Sucesso: Inicializacao padrao das Preferencias verificada.");
     }

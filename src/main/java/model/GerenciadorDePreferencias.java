@@ -113,7 +113,7 @@ public class GerenciadorDePreferencias {
                 if (!linhaNum.isBlank()) {
                     try {
                         int num = Integer.parseInt(linhaNum);
-                        preferencias.setNumeroCadeiras(num);
+                        preferencias.setNumeroDisciplinas(num);
                     } catch (NumberFormatException e) {
                         logger.warn("Número de disciplinas inválido nas preferências: '{}'. Mantendo valor padrão.",
                                 linhaNum);
@@ -170,7 +170,7 @@ public class GerenciadorDePreferencias {
                 writer.println(sb.toString());
             }
 
-            writer.println(preferencias.getNumeroCadeiras());
+            writer.println(preferencias.getNumeroDisciplinas());
 
             logger.info("Preferências salvas com sucesso no arquivo '{}'.", caminhoArquivo);
 

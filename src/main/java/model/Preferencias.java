@@ -9,21 +9,21 @@ public class Preferencias {
 
     private List<String> professoresEvitados;
     private List<Horario> horariosEvitados;
-    private int numeroCadeiras; 
+    private int numeroDisciplinas; 
 
     public Preferencias() {
         this.professoresPreferidos = new ArrayList<>();
         this.professoresEvitados = new ArrayList<>();
         this.horariosEvitados = new ArrayList<>();
-        this.numeroCadeiras = 0; 
+        this.numeroDisciplinas = 0; 
     }
 
-    public int getNumeroCadeiras() {
-        return numeroCadeiras;
+    public int getNumeroDisciplinas() {
+        return numeroDisciplinas;
     }
 
-    public void setNumeroCadeiras(int numeroCadeiras) {
-        this.numeroCadeiras = numeroCadeiras;
+    public void setNumeroDisciplinas(int numeroDisciplina) {
+        this.numeroDisciplinas = numeroDisciplina;
     }
 
     public Turno getTurnoPreferido() {

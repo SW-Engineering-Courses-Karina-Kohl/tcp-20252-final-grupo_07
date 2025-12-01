@@ -47,9 +47,9 @@ public class GerenciadorDePreferenciasTest {
         logger.info("Assert: turnoPreferido igual ao padrão. Esperado={}, Obtido={}",
                 padrao.getTurnoPreferido(), prefs.getTurnoPreferido());
 
-        assertEquals(padrao.getNumeroCadeiras(), prefs.getNumeroCadeiras());
-        logger.info("Assert: numeroCadeiras igual ao padrão. Esperado={}, Obtido={}",
-                padrao.getNumeroCadeiras(), prefs.getNumeroCadeiras());
+        assertEquals(padrao.getNumeroDisciplinas(), prefs.getNumeroDisciplinas());
+        logger.info("Assert: numeroDisciplinas igual ao padrão. Esperado={}, Obtido={}",
+                padrao.getNumeroDisciplinas(), prefs.getNumeroDisciplinas());
 
         assertEquals(padrao.getProfessoresPreferidos(), prefs.getProfessoresPreferidos());
         logger.info("Assert: professoresPreferidos igual ao padrão. Esperado={}, Obtido={}",
@@ -76,11 +76,11 @@ public class GerenciadorDePreferenciasTest {
         p.adicionarProfessorPreferido("Karina");
         p.adicionarProfessorEvitado("Fulano");
         p.adicionarHorarioBloqueado(new Horario(LocalTime.of(8,30), LocalTime.of(10,10), DiaSemana.SEGUNDA));
-        p.setNumeroCadeiras(5);
+        p.setNumeroDisciplinas(5);
 
-        logger.info("Preferencias configuradas para salvar: turno={}, numCadeiras={}, pref={}, evitados={}, horariosBloqueados={}",
+        logger.info("Preferencias configuradas para salvar: turno={}, numDisciplinas={}, pref={}, evitados={}, horariosBloqueados={}",
                 p.getTurnoPreferido(),
-                p.getNumeroCadeiras(),
+                p.getNumeroDisciplinas(),
                 p.getProfessoresPreferidos(),
                 p.getProfessoresEvitados(),
                 p.getHorariosBloqueados());
@@ -89,10 +89,10 @@ public class GerenciadorDePreferenciasTest {
         logger.info("Preferencias salvas em {}", caminho);
 
         Preferencias carregado = ger.carregarPreferencias(caminho);
-        logger.info("Preferencias carregadas de {}: turno={}, numCadeiras={}, pref={}, evitados={}, horariosBloqueados={}",
+        logger.info("Preferencias carregadas de {}: turno={}, numDisciplinas={}, pref={}, evitados={}, horariosBloqueados={}",
                 caminho,
                 carregado.getTurnoPreferido(),
-                carregado.getNumeroCadeiras(),
+                carregado.getNumeroDisciplinas(),
                 carregado.getProfessoresPreferidos(),
                 carregado.getProfessoresEvitados(),
                 carregado.getHorariosBloqueados());
@@ -118,8 +118,8 @@ public class GerenciadorDePreferenciasTest {
         assertEquals(DiaSemana.SEGUNDA, h.getDiaSemana());
         logger.info("Assert: horario bloqueado carregado bate com o salvo.");
 
-        assertEquals(5, carregado.getNumeroCadeiras());
-        logger.info("Assert: numeroCadeiras == 5");
+        assertEquals(5, carregado.getNumeroDisciplinas());
+        logger.info("Assert: numeroDisciplinas == 5");
     }
 
     @Test
@@ -145,9 +145,9 @@ public class GerenciadorDePreferenciasTest {
         Files.writeString(Path.of(caminho), conteudo);
 
         Preferencias p = ger.carregarPreferencias(caminho);
-        logger.info("Preferencias carregadas com turno inválido: turno={}, numCadeiras={}, pref={}, evitados={}, horariosBloqueados={}",
+        logger.info("Preferencias carregadas com turno inválido: turno={}, numDisciplinas={}, pref={}, evitados={}, horariosBloqueados={}",
                 p.getTurnoPreferido(),
-                p.getNumeroCadeiras(),
+                p.getNumeroDisciplinas(),
                 p.getProfessoresPreferidos(),
                 p.getProfessoresEvitados(),
                 p.getHorariosBloqueados());

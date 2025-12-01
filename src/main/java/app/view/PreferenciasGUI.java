@@ -87,6 +87,10 @@ public class PreferenciasGUI {
         rbManha = new JRadioButton("Manhã");
         rbTarde = new JRadioButton("Tarde");
         rbNoite = new JRadioButton("Noite");
+
+        //define manha como default turno preferido 
+        rbManha.setSelected(true);
+        
         ButtonGroup grupoTurno = new ButtonGroup();
         grupoTurno.add(rbManha);
         grupoTurno.add(rbTarde);
@@ -99,8 +103,8 @@ public class PreferenciasGUI {
 
         //num cadeiras
         JPanel painelNumCad = new JPanel();
-        painelNumCad.setBorder(BorderFactory.createTitledBorder("Número de cadeiras desejado"));
-        spinnerNumCad = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
+        painelNumCad.setBorder(BorderFactory.createTitledBorder("Número de disciplinas desejado (use as setinhas)"));
+        spinnerNumCad = new JSpinner(new SpinnerNumberModel(1, 1, controller.getNumDisciplinas(), 1));
         painelNumCad.add(spinnerNumCad);
         painelDireito.add(painelNumCad);
 
@@ -178,7 +182,7 @@ public class PreferenciasGUI {
 
             //número de cadeiras
             int numCadeiras = (int) spinnerNumCad.getValue();
-            prefs.setNumeroCadeiras(numCadeiras);
+            prefs.setNumeroDisciplinas(numCadeiras);
 
             //horários bloqueados
             List<Horario> bloqueados = obterHorariosBloqueados();
@@ -276,6 +280,16 @@ public class PreferenciasGUI {
 
     //atualiza a lista de professores com base nas turmas atuais
     public static void atualizarProfessores(AppController controller) {
+
+        //Atualiza valores do spinner
+        if (spinnerNumCad != null) {
+            int maximo = controller.getNumDisciplinas();
+            int valorAtual = (Integer) spinnerNumCad.getValue();
+
+            if (valorAtual > maximo) valorAtual = maximo;
+            spinnerNumCad.setModel(new SpinnerNumberModel(valorAtual, 1, maximo, 1));
+        }
+
         if (painelPref == null || painelEv == null) return;
 
         painelPref.removeAll();
@@ -334,7 +348,7 @@ public class PreferenciasGUI {
     boolean semProfPref = prefs.getProfessoresPreferidos().isEmpty();
     boolean semProfEv = prefs.getProfessoresEvitados().isEmpty();
     boolean semHorarios = prefs.getHorariosBloqueados().isEmpty();
-    boolean numCadeirasZerado = prefs.getNumeroCadeiras() <= 0;
+    boolean numCadeirasZerado = prefs.getNumeroDisciplinas() <= 0;
 
     boolean arquivoVazio =
             semTurno && semProfPref && semProfEv && semHorarios && numCadeirasZerado;
@@ -366,8 +380,8 @@ public class PreferenciasGUI {
         }
 
         //num cadeiras
-        if (prefs.getNumeroCadeiras() > 0) {
-            spinnerNumCad.setValue(prefs.getNumeroCadeiras());
+        if (prefs.getNumeroDisciplinas() > 0) {
+            spinnerNumCad.setValue(prefs.getNumeroDisciplinas());
         } else {
             spinnerNumCad.setValue(1);
         }

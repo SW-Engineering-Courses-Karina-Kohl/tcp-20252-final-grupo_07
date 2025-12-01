@@ -42,8 +42,8 @@ public class GeradorDeGrades {
             return;
         }
 
-        int numCadeiras = preferenciasUsuario.getNumeroCadeiras();
-        logger.info("Iniciando geração de grades com {} disciplinas.", numCadeiras);
+        int numDisciplinas = preferenciasUsuario.getNumeroDisciplinas();
+        logger.info("Iniciando geração de grades com {} disciplinas.", numDisciplinas);
 
         gradesGeradas.clear();
 
@@ -58,11 +58,11 @@ public class GeradorDeGrades {
 
     //backtracking!!!!!
     private void buscarCombinacoes(Grade gradeAtual, int indexDisciplina) {
-        int numCadeiras = preferenciasUsuario.getNumeroCadeiras();
+        int numDisciplinas = preferenciasUsuario.getNumeroDisciplinas();
         int qtdAtual = gradeAtual.getTurmasSelecionadas().size();
 
         // fez a grade completa. salva
-        if (qtdAtual == numCadeiras) {
+        if (qtdAtual == numDisciplinas) {
             gradesGeradas.add(new Grade(gradeAtual)); // faz uma cópia
             return;
         }
@@ -75,7 +75,7 @@ public class GeradorDeGrades {
         // para por aqui. porque nem com todas as disciplinas restantes
         // da pra completar o numero de cadeiras desejado(pruning)
         int disciplinasRestantes = disciplinasDisponiveis.size() - indexDisciplina;
-        if (qtdAtual + disciplinasRestantes < numCadeiras) {
+        if (qtdAtual + disciplinasRestantes < numDisciplinas) {
             return;
         }
 
@@ -106,7 +106,7 @@ public class GeradorDeGrades {
         }
 
         //limite de cadeiras
-        if (gradeAtual.getTurmasSelecionadas().size() >= preferenciasUsuario.getNumeroCadeiras()) {
+        if (gradeAtual.getTurmasSelecionadas().size() >= preferenciasUsuario.getNumeroDisciplinas()) {
             return true;
         }
 
