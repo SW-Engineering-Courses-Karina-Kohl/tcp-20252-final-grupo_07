@@ -128,9 +128,7 @@ public class AppController {
     //-------------------------------------------------------------------------
     //fluxo de carregamento csv e aluno inf
     ///-------------------------------------------------------------------------
-    public void iniciarFluxoAlunoUfrgs() {//apagar!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String caminho = "aluno.csv"; //arquivo padrao
-
+    public void iniciarFluxoAlunoUfrgs(String caminho) {
         ExtracaoDados extrator = new ExtracaoDados();
         disciplinasCarregadas = extrator.carregarDisciplinas(caminho);
 
@@ -165,7 +163,7 @@ public class AppController {
             }
         }
         //vai direto para a tela de preferências
-        mostrarPreferencias();
+        mostrarSelecaoDisciplinas();
     }
 
     //chamado depois da tela de seleção de disciplinas (Aluno INF) //apagar!!!!!!!!!!!!!!!!!!!!!
