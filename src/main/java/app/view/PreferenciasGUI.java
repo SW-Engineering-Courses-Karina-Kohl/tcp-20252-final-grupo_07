@@ -129,7 +129,7 @@ public class PreferenciasGUI {
         //num cadeiras
         JPanel painelNumCad = new JPanel();
         painelNumCad.setBorder(BorderFactory.createTitledBorder("Numero de disciplinas desejado (use as setinhas)"));
-        spinnerNumCad = new JSpinner(new SpinnerNumberModel(1, 1, controller.getNumDisciplinas(), 1));
+        spinnerNumCad = new JSpinner(new SpinnerNumberModel(controller.getNumDisciplinas(), 1, controller.getNumDisciplinas(), 1));
         painelNumCad.add(spinnerNumCad);
         painelDireito.add(painelNumCad);
 
@@ -309,7 +309,7 @@ public class PreferenciasGUI {
         //Atualiza valores do spinner
         if (spinnerNumCad != null) {
             int maximo = controller.getNumDisciplinas();
-            int valorAtual = (Integer) spinnerNumCad.getValue();
+            int valorAtual = maximo;
 
             if (valorAtual > maximo) valorAtual = maximo;
             spinnerNumCad.setModel(new SpinnerNumberModel(valorAtual, 1, maximo, 1));
