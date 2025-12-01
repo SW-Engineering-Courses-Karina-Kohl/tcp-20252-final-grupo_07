@@ -31,8 +31,9 @@ bin/
 # Ignora arquivos de configuração do IDE
 .vscode/
 
+# app specific
+preferencias.csv
+
 # Mantem o wrapper do Gradle
 !gradle-wrapper.jar
 
-# app specific
-preferencias.csv

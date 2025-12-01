@@ -3,6 +3,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +64,10 @@ public class ExtracaoDados {
                         logger.warn("Linha {} ignorada (sem dia/inicio/fim): {}", linhaAtual, linha);
                         continue;
                     }
-
-                    LocalTime inicio = LocalTime.parse(inicioStr.trim());
-                    LocalTime fim    = LocalTime.parse(fimStr.trim());
+                    
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+                    LocalTime inicio = LocalTime.parse(inicioStr.trim(), formatter);
+                    LocalTime fim    = LocalTime.parse(fimStr.trim(), formatter);
 
                     Disciplina disciplina = mapaDisciplinas.get(codDisc);
                     if (disciplina == null) {
