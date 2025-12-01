@@ -130,25 +130,6 @@ public class AppController {
         layout.show(container, "SELEC_DISC");
     }
 
-    //-------------------------------------------------------------------------
-    //fluxo de carregamento csv e aluno inf
-    ///-------------------------------------------------------------------------
-     
-    /*public void iniciarFluxoAlunoUfrgs(String caminho) {
-        ExtracaoDados extrator = new ExtracaoDados();
-        disciplinasCarregadas = extrator.carregarDisciplinas(caminho);
-
-        if (disciplinasCarregadas == null || disciplinasCarregadas.isEmpty()) {
-            JOptionPane.showMessageDialog(frame,
-                    "Não foi possível carregar disciplinas do arquivo 'aluno.csv'.\n" +
-                    "Verifique se o arquivo existe e segue o formato esperado.",
-                    "Erro ao carregar CSV",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        mostrarSelecaoDisciplinas();
-    } */
-    
     //usuario escohe o arquivo no proprio pc
     public void carregarTurmasDeCsv(String caminhoArquivo) {
         ExtracaoDados extrator = new ExtracaoDados();
@@ -175,7 +156,6 @@ public class AppController {
         mostrarSelecaoDisciplinas();
     }
 
-    //chamado depois da tela de seleção de disciplinas (Aluno INF) //apagar!!!!!!!!!!!!!!!!!!!!!
     public void definirDisciplinasSelecionadas(List<Disciplina> selecionadas) {
         turmasCriadas.clear();
 
