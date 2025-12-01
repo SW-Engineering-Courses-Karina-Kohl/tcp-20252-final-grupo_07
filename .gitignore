@@ -33,3 +33,6 @@ bin/
 
 # Mantem o wrapper do Gradle
 !gradle-wrapper.jar
+
+# app specific
+preferencias.csv

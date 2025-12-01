@@ -37,8 +37,8 @@ public class PreferenciasGUI {
             LocalTime.of(13, 30),
             LocalTime.of(15, 30),
             LocalTime.of(17, 30),
-            LocalTime.of(19, 30),
-            LocalTime.of(21, 30)
+            LocalTime.of(18, 30),
+            LocalTime.of(20, 30)
     };
 
     private static final LocalTime[] FINS = {
@@ -47,8 +47,8 @@ public class PreferenciasGUI {
             LocalTime.of(15, 10),
             LocalTime.of(17, 10),
             LocalTime.of(19, 10),
-            LocalTime.of(21, 10),
-            LocalTime.of(23, 10)
+            LocalTime.of(20, 10),
+            LocalTime.of(22, 10)
     };
 
     //checkboxes de professores
@@ -257,7 +257,7 @@ public class PreferenciasGUI {
 
         String[] horariosLabel = {
                 "08:30", "10:30", "13:30", "15:30",
-                "17:30", "19:30", "21:30"
+                "17:30", "18:30", "20:30"
         };
 
         int linhas = horariosLabel.length;
