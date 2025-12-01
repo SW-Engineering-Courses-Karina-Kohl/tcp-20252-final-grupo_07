@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.text.Collator;
-import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -113,16 +111,6 @@ public class ExtracaoDados {
 
         
         List<Disciplina> resultado = new ArrayList<>(mapaDisciplinas.values());
-
-        // sort por nome locale-aware
-        Collator coll = Collator.getInstance(Locale.getDefault());
-        coll.setStrength(Collator.PRIMARY);
-
-        resultado.sort((a, b) -> {
-            int res = coll.compare(a.getNome(), b.getNome());
-            if (res != 0) return res;
-            return a.getCodigo().compareToIgnoreCase(b.getCodigo());
-        });
 
         return resultado;
     }
