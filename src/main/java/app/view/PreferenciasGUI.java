@@ -3,8 +3,10 @@ package app.view;
 import model.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import app.controller.AppController;
+import app.view.utils.BtnDefault;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -32,32 +34,47 @@ public class PreferenciasGUI {
     };
 
     private static final LocalTime[] INICIOS = {
-            LocalTime.of(8, 30),
-            LocalTime.of(10, 30),
-            LocalTime.of(13, 30),
-            LocalTime.of(15, 30),
-            LocalTime.of(17, 30),
-            LocalTime.of(18, 30),
-            LocalTime.of(20, 30)
+            LocalTime.of(7, 30),  
+            LocalTime.of(8, 30),  
+            LocalTime.of(9, 30),  
+            LocalTime.of(10, 30), 
+            LocalTime.of(11, 30), 
+            LocalTime.of(13, 30), 
+            LocalTime.of(14, 30), 
+            LocalTime.of(15, 30), 
+            LocalTime.of(16, 30), 
+            LocalTime.of(17, 30), 
+            LocalTime.of(18, 30), 
+            LocalTime.of(19, 30), 
+            LocalTime.of(20, 30),
+            LocalTime.of(21,30)  
     };
 
     private static final LocalTime[] FINS = {
+            LocalTime.of(8, 10),
+            LocalTime.of(9, 10),
             LocalTime.of(10, 10),
+            LocalTime.of(11, 10),
             LocalTime.of(12, 10),
+            LocalTime.of(14, 10),
             LocalTime.of(15, 10),
+            LocalTime.of(16, 10),
             LocalTime.of(17, 10),
+            LocalTime.of(18, 10),
             LocalTime.of(19, 10),
             LocalTime.of(20, 10),
+            LocalTime.of(21, 10),
             LocalTime.of(22, 10)
     };
 
     //checkboxes de professores
     private static Map<String, JCheckBox> mapaPref = new HashMap<>();
-    private static Map<String, JCheckBox> mapaEv = new HashMap<>();
+    private static Map<String, JCheckBox> mapaDesc = new HashMap<>();
+    private static Map<String, Turma> mapaTurma = new HashMap<>();
 
     // painéis que contêm os checkboxes (pra poder atualizar depois)
     private static JPanel painelPref;
-    private static JPanel painelEv;
+    private static JPanel painelDesc;
 
     //acessar em carregar/limpar prefs
     private static JRadioButton rbManha;
@@ -80,7 +97,7 @@ public class PreferenciasGUI {
         JPanel painelHorarios = criarPainelHorarios();
         centro.add(painelHorarios);
 
-        //lado direito- turno + professores + nº cadeiras 
+        //lado direito- turno + turmas + nº cadeiras 
         JPanel painelDireito = new JPanel();
         painelDireito.setLayout(new BoxLayout(painelDireito, BoxLayout.Y_AXIS));
 
@@ -133,27 +150,34 @@ public class PreferenciasGUI {
         painelNumCad.add(spinnerNumCad);
         painelDireito.add(painelNumCad);
 
-        //bloco dos professores
-        JPanel painelProfessores = new JPanel();
-        painelProfessores.setLayout(new GridLayout(2, 1));
+        //bloco das turmas preferidas e descartadas
+        JPanel painelTurmas = new JPanel();
+        painelTurmas.setLayout(new GridLayout(2, 1));
 
         // preferidos
         painelPref = new JPanel();
         painelPref.setLayout(new BoxLayout(painelPref, BoxLayout.Y_AXIS));
-        painelPref.setBorder(BorderFactory.createTitledBorder("Professores preferidos"));
+        painelPref.setBorder(BorderFactory.createTitledBorder("Turmas preferidas"));
 
-        // evitados
-        painelEv = new JPanel();
-        painelEv.setLayout(new BoxLayout(painelEv, BoxLayout.Y_AXIS));
-        painelEv.setBorder(BorderFactory.createTitledBorder("Professores evitados"));
+        //barra de scroll das turmas preferidas
+        JScrollPane scrollpainelPref = new JScrollPane(painelPref);
+        scrollpainelPref.getVerticalScrollBar().setUnitIncrement(8); //scroll anda 1 linha 
+        painelTurmas.add(scrollpainelPref);
 
-        painelProfessores.add(new JScrollPane(painelPref));
-        painelProfessores.add(new JScrollPane(painelEv));
+        // descartados
+        painelDesc = new JPanel();
+        painelDesc.setLayout(new BoxLayout(painelDesc, BoxLayout.Y_AXIS));
+        painelDesc.setBorder(BorderFactory.createTitledBorder("Turmas descartadas"));
 
-        //monta a lista inicial (vai ser atualizada sempre que entrar na tela)
-        atualizarProfessores(controller);
+        //barra de scroll das turmas descartadas
+        JScrollPane scrollpainelDesc = new JScrollPane(painelDesc);
+        scrollpainelDesc.getVerticalScrollBar().setUnitIncrement(8); //scroll anda 1 linha 
+        painelTurmas.add(scrollpainelDesc);
 
-        painelDireito.add(painelProfessores);
+        //monta a lista inicial 
+        atualizarTurmas(controller);
+        
+        painelDireito.add(painelTurmas);
 
         centro.add(painelDireito);
 
@@ -161,30 +185,38 @@ public class PreferenciasGUI {
 
         //botoes
         JPanel painelBotoes = new JPanel();
+        
+        BtnDefault btnMenu = new BtnDefault("Ir para menu");
+        btnMenu.addActionListener(e -> {
+            /* 
+            painelPref.removeAll();
+            painelDesc.removeAll();
 
-        JButton btnMenu = new JButton("Menu");
-        btnMenu.setBackground(Color.WHITE);
-        btnMenu.addActionListener(e -> controller.mostrarMenuInicial());
+            mapaPref.clear();
+            mapaDesc.clear();
+            mapaTurma.clear();
+        */
+            controller.mostrarMenuInicial();
+        });
 
-        JButton btnCarregar = new JButton("Carregar preferências");
-        btnCarregar.setBackground(Color.WHITE);
+        BtnDefault btnCarregar = new BtnDefault("Carregar preferências");
         btnCarregar.addActionListener(e -> carregarPreferenciasNaTela(controller));
 
-        JButton btnLimpar = new JButton("Limpar preferências");
-        btnLimpar.setBackground(Color.WHITE);
+        BtnDefault btnLimpar = new BtnDefault("Limpar preferências");
         btnLimpar.addActionListener(e -> {
             Preferencias vazias = new Preferencias(); // construtor zera listas e usa defaults
             aplicarPreferenciasNaTela(controller, vazias);
+
             // também sobrescreve o arquivo com tudo vazio
-            GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
-            ger.salvarPreferencias(CAMINHO_PREFS, vazias);
+            //GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
+            //ger.salvarPreferencias(CAMINHO_PREFS, vazias);
+
             JOptionPane.showMessageDialog(painel,
-                    "Preferências limpas e arquivo sobrescrito.",
+                    "Preferências limpas.",
                     "Informação", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        JButton btnGerar = new JButton("Gerar grades");
-        btnGerar.setBackground(Color.WHITE);
+        BtnDefault btnGerar = new BtnDefault("Salvar e Gerar grades");
         btnGerar.addActionListener(e -> {
 
             if (!controller.temTurmas()) {
@@ -215,19 +247,33 @@ public class PreferenciasGUI {
                 prefs.adicionarHorarioBloqueado(h);
             }
 
-            //professores preferidos
-            for (String nomeProf : mapaPref.keySet()) {
-                JCheckBox cb = mapaPref.get(nomeProf);
+            //turmas preferidas
+            for (String dadosTurma : mapaPref.keySet()) {
+                JCheckBox cb = mapaPref.get(dadosTurma);
+
                 if (cb.isSelected()) {
-                    prefs.adicionarProfessorPreferido(nomeProf);
+                    //recupera a turma associada a string (que vai no checkbox) de seus dados
+                    Turma t = mapaTurma.get(dadosTurma);
+                    if(t != null){
+                        prefs.adicionarTurmaPreferida(t);
+                    }
+                    else{
+                        System.err.println("Erro ao add turma preferida: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
                 }
             }
 
-            //professores evitados
-            for (String nomeProf : mapaEv.keySet()) {
-                JCheckBox cb = mapaEv.get(nomeProf);
+            //turmas evitadas
+            for (String dadosTurma : mapaDesc.keySet()) {
+                JCheckBox cb = mapaDesc.get(dadosTurma);
+
                 if (cb.isSelected()) {
-                    prefs.adicionarProfessorEvitado(nomeProf);
+                    //recupera a turma associada a string (que vai no checkbox) de seus dados
+                    Turma t = mapaTurma.get(dadosTurma);
+                    if(t != null){
+                        prefs.adicionarTurmaDescartada(t);
+                    }
+                    else{
+                        System.err.println("Erro ao add turma descartada: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
                 }
             }
 
@@ -256,8 +302,8 @@ public class PreferenciasGUI {
         String[] dias = {"SEG", "TER", "QUA", "QUI", "SEX", "SÁB"};
 
         String[] horariosLabel = {
-                "08:30", "10:30", "13:30", "15:30",
-                "17:30", "18:30", "20:30"
+                "07:30", "08:30", "09:30", "10:30", "11:30", "13:30", "14:30", "15:30",
+                "16:30", "17:30", "18:30", "19:30", "20:30", "21:30"
         };
 
         int linhas = horariosLabel.length;
@@ -279,14 +325,34 @@ public class PreferenciasGUI {
 
             for (int j = 0; j < colunas; j++) {
                 JCheckBox cb = new JCheckBox();
-                cb.setHorizontalAlignment(SwingConstants.CENTER);
-                cb.setBorderPainted(true);
+                customizarCheckbox(cb);
                 matrizDisponibilidade[i][j] = cb;
                 painel.add(cb);
             }
         }
 
         return painel;
+    }
+
+    private static void customizarCheckbox(JCheckBox cb){
+        Border bordaNormal = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+        Border bordaFoco = BorderFactory.createLineBorder(Color.GRAY);
+
+        cb.setHorizontalAlignment(SwingConstants.CENTER);
+        cb.setBorderPainted(true); 
+        cb.setBorder(bordaNormal); //define borda inicial
+
+        cb.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                cb.setBorder(bordaFoco);
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                cb.setBorder(bordaNormal);
+            }
+        });
     }
 
     private static List<Horario> obterHorariosBloqueados() {
@@ -303,9 +369,8 @@ public class PreferenciasGUI {
         return bloqueados;
     }
 
-    //atualiza a lista de professores com base nas turmas atuais
-    public static void atualizarProfessores(AppController controller) {
-
+    public static void atualizarTurmas(AppController controller) {
+            
         //Atualiza valores do spinner
         if (spinnerNumCad != null) {
             int maximo = controller.getNumDisciplinas();
@@ -315,67 +380,71 @@ public class PreferenciasGUI {
             spinnerNumCad.setModel(new SpinnerNumberModel(valorAtual, 1, maximo, 1));
         }
 
-        if (painelPref == null || painelEv == null) return;
+        if (painelPref == null || painelDesc == null) return;
 
         painelPref.removeAll();
-        painelEv.removeAll();
+        painelDesc.removeAll();
 
         mapaPref.clear();
-        mapaEv.clear();
+        mapaDesc.clear();
+        mapaTurma.clear();
 
-        Set<String> nomesProfessores = new TreeSet<>();
+        grupoTurno.clearSelection();
+        limpaHorariosBloqueados();
+
+        Set<String> stringsTurmas = new TreeSet<>();
 
         for (Turma t : controller.getTurmas()) {
-            if (t.getProfessor() != null) {
-                nomesProfessores.add(t.getProfessor().getNome().trim());
+            if (t != null) {
+                String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+                mapaTurma.put(strTurma, t);
+                stringsTurmas.add(strTurma);
             }
         }
 
-        for (String nome : nomesProfessores) {
+        for (String nome : stringsTurmas) {
             JCheckBox cbPref = new JCheckBox(nome);
-            JCheckBox cbEv   = new JCheckBox(nome);
+            JCheckBox cbDesc   = new JCheckBox(nome);
 
-            // se marcar preferido, desmarca evitado
+            // se marcar preferido, desmarca descartado
             cbPref.addActionListener(e -> {
                 if (cbPref.isSelected()) {
-                    cbEv.setSelected(false);
+                    cbDesc.setSelected(false);
                 }
             });
 
-            // se marcar evitado, desmarca preferido
-            cbEv.addActionListener(e -> {
-                if (cbEv.isSelected()) {
+            // se marcar descartado, desmarca preferido
+            cbDesc.addActionListener(e -> {
+                if (cbDesc.isSelected()) {
                     cbPref.setSelected(false);
                 }
             });
 
             mapaPref.put(nome, cbPref);
-            mapaEv.put(nome, cbEv);
+            mapaDesc.put(nome, cbDesc);
 
             painelPref.add(cbPref);
-            painelEv.add(cbEv);
+            painelDesc.add(cbDesc);
         }
 
-        painelPref.revalidate();
-        painelPref.repaint();
-        painelEv.revalidate();
-        painelEv.repaint();
+        painelPref.revalidate(); painelPref.repaint();
+        painelDesc.revalidate(); painelDesc.repaint();
     }
 
     //carregar preferências do CSV e jogar na tela 
     private static void carregarPreferenciasNaTela(AppController controller) {
         GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
-        Preferencias prefs = ger.carregarPreferencias(CAMINHO_PREFS);
+        List <Turma> turmas = controller.getTurmas();
+        Preferencias prefs = ger.carregarPreferencias(CAMINHO_PREFS, turmas);
 
         //verifica se o arquivo existe e ta vazio
         boolean semTurno = (prefs.getTurnoPreferido() == null);
-        boolean semProfPref = prefs.getProfessoresPreferidos().isEmpty();
-        boolean semProfEv = prefs.getProfessoresEvitados().isEmpty();
+        boolean semTurmaPref = prefs.getTurmasPreferidas().isEmpty();
+        boolean semTurmaDesc = prefs.getTurmasDescartadas().isEmpty();
         boolean semHorarios = prefs.getHorariosBloqueados().isEmpty();
         boolean numCadeirasZerado = prefs.getNumeroDisciplinas() <= 0;
 
-        boolean arquivoVazio =
-                semTurno && semProfPref && semProfEv && semHorarios && numCadeirasZerado;
+        boolean arquivoVazio = semTurno && semTurmaPref && semTurmaDesc && semHorarios && numCadeirasZerado;
 
         if (arquivoVazio) {
             JOptionPane.showMessageDialog(null,
@@ -386,7 +455,7 @@ public class PreferenciasGUI {
         }
         //se tiver preferencia aplica
         aplicarPreferenciasNaTela(controller, prefs);
-}
+    }
 
     private static void aplicarPreferenciasNaTela(AppController controller, Preferencias prefs) {
         //turno preferido
@@ -408,12 +477,8 @@ public class PreferenciasGUI {
         }
 
         //horarios bloqueados
-        // limpa
-        for (int i = 0; i < matrizDisponibilidade.length; i++) {
-            for (int j = 0; j < matrizDisponibilidade[i].length; j++) {
-                matrizDisponibilidade[i][j].setSelected(false);
-            }
-        }
+        // primeiro limpa e depois seleciona de acordo com as preferencias
+        limpaHorariosBloqueados();
 
         for (Horario h : prefs.getHorariosBloqueados()) {
             int idxHora = -1;
@@ -438,19 +503,29 @@ public class PreferenciasGUI {
             }
         }
 
-        //professores
+        //turmas
         // limpa tudo
         for (JCheckBox cb : mapaPref.values()) cb.setSelected(false);
-        for (JCheckBox cb : mapaEv.values()) cb.setSelected(false);
+        for (JCheckBox cb : mapaDesc.values()) cb.setSelected(false);
 
-        for (String nome : prefs.getProfessoresPreferidos()) {
-            JCheckBox cb = mapaPref.get(nome);
+        for (Turma t : prefs.getTurmasPreferidas()) {
+            String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+            JCheckBox cb = mapaPref.get(strTurma);
             if (cb != null) cb.setSelected(true);
         }
 
-        for (String nome : prefs.getProfessoresEvitados()) {
-            JCheckBox cb = mapaEv.get(nome);
+        for (Turma t : prefs.getTurmasDescartadas()) {
+            String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+            JCheckBox cb = mapaDesc.get(strTurma);
             if (cb != null) cb.setSelected(true);
+        }
+    }
+
+    public static void limpaHorariosBloqueados(){
+        for (int i = 0; i < matrizDisponibilidade.length; i++) {
+            for (int j = 0; j < matrizDisponibilidade[i].length; j++) {
+                matrizDisponibilidade[i][j].setSelected(false);
+            }
         }
     }
 }

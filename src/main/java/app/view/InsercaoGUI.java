@@ -5,6 +5,7 @@ import model.*;
 import javax.swing.*;
 
 import app.controller.AppController;
+import app.view.utils.BtnDefault;
 
 import java.awt.*;
 import java.time.LocalTime;
@@ -146,24 +147,21 @@ public class InsercaoGUI {
 
         painel.add(centro, BorderLayout.CENTER);
 
-        // ====================== RODAPÉ: BOTÕES ===============================
+        //rodape - botoes
 
         JPanel painelBotoes = new JPanel(new BorderLayout());
 
         //sub-painel para agrupar os botões da esquerda
         JPanel subPainelEsquerda = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
-        JButton btnMenu = new JButton("Ir para Menu");
-        btnMenu.setBackground(Color.WHITE);
+        BtnDefault btnMenu = new  BtnDefault("Ir para Menu");
         btnMenu.addActionListener(e -> controller.mostrarMenuInicial());
         
-        JButton btnGrades = new JButton("Ir para grades");
-        btnGrades.setBackground(Color.WHITE);
+        BtnDefault btnGrades = new  BtnDefault("Ir para grades");
         btnGrades.addActionListener(e -> controller.gerarGrades());
 
         // BOTÃO IR PARA PREFERÊNCIAS
-        JButton btnIrPreferencias = new JButton("Ir para preferencias");
-        btnIrPreferencias.setBackground(Color.WHITE);
+        BtnDefault btnIrPreferencias = new  BtnDefault("Ir para preferencias");
         btnIrPreferencias.addActionListener(e -> {
             if (controller.getTurmas().isEmpty()) {
                 JOptionPane.showMessageDialog(painel,
@@ -184,14 +182,12 @@ public class InsercaoGUI {
         JPanel subPainelDireita = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         // BOTÃO ADICIONAR TURMA
-        JButton btnAdicionar = new JButton("Adicionar turma");
-        btnAdicionar.setBackground(Color.WHITE);
+        BtnDefault btnAdicionar = new  BtnDefault("Adicionar turma");
         btnAdicionar.addActionListener(e -> adicionarTurma(controller));
         subPainelDireita.add(btnAdicionar);
 
         // BOTÃO LIMPAR CAMPOS
-        JButton btnLimpar = new JButton("Limpar campos");
-        btnLimpar.setBackground(Color.WHITE);
+        BtnDefault btnLimpar = new  BtnDefault("Limpar campos");
         btnLimpar.addActionListener(e -> limparCampos());
         subPainelDireita.add(btnLimpar);
 

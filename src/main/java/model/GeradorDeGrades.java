@@ -18,7 +18,7 @@ public class GeradorDeGrades {
 
     private static final Logger logger = LogManager.getLogger(GeradorDeGrades.class);
 
-    private static final int LIMITE_MAXIMO_RESULTADOS = 10;
+    private static final int LIMITE_MAXIMO_RESULTADOS = 50;
 
     private List<Grade> gradesGeradas;
     private List<Disciplina> disciplinasDisponiveis;
@@ -51,12 +51,10 @@ public class GeradorDeGrades {
         buscarCombinacoes(gradeInicial, 0);
 
         ordenarGradesPorQualidade();
-        aplicarCorteDeSeguranca();
-
         logger.info("Geração finalizada. Total de opções válidas retornadas: {}", gradesGeradas.size());
     }
 
-    //backtracking!!!!!
+    //backtracking
     private void buscarCombinacoes(Grade gradeAtual, int indexDisciplina) {
         int numDisciplinas = preferenciasUsuario.getNumeroDisciplinas();
         int qtdAtual = gradeAtual.getTurmasSelecionadas().size();
@@ -95,12 +93,11 @@ public class GeradorDeGrades {
         buscarCombinacoes(gradeAtual, indexDisciplina + 1);
     }
 
-    //restricoes (rigidas!!!)
+    //restricoes 
     private boolean violaRestricoes(Turma turma, Grade gradeAtual) {
-        //professor evitado
-        String nomeProf = turma.getProfessor().getNome().trim();
-        for (String evitado : preferenciasUsuario.getProfessoresEvitados()) {
-            if (nomeProf.equalsIgnoreCase(evitado.trim())) {
+        //Turma descartada
+        for (Turma t : preferenciasUsuario.getTurmasDescartadas()) {
+            if (turma == t) {
                 return true;
             }
         }
@@ -134,7 +131,8 @@ public class GeradorDeGrades {
         });
     }
 
-    //limita o numero de resultados para nao explodir tudo
+    //limita o numero de resultados para nao explodir em tempo de execucao
+    /* 
     private void aplicarCorteDeSeguranca() {
         if (gradesGeradas.size() > LIMITE_MAXIMO_RESULTADOS) {
             logger.info("Muitas combinações encontradas ({}). Mantendo apenas as Top {}.",
@@ -143,19 +141,18 @@ public class GeradorDeGrades {
             gradesGeradas = new ArrayList<>(gradesGeradas.subList(0, LIMITE_MAXIMO_RESULTADOS));
         }
     }
+    */
 
     private int calcularPontuacao(Grade grade) {
         int pontos = 0;
-
         for (Turma turma : grade.getTurmasSelecionadas()) {
-            String nomeProf = turma.getProfessor().getNome().trim();
-            for (String favorito : preferenciasUsuario.getProfessoresPreferidos()) {
-                if (nomeProf.equalsIgnoreCase(favorito.trim())) {
+            for (Turma tPref : preferenciasUsuario.getTurmasPreferidas()) {
+                if (turma == tPref){    
                     pontos += 100;
                     break;
                 }
             }
-
+        
             Turno turnoPref = preferenciasUsuario.getTurnoPreferido();
             if (turnoPref != null) {
                 for (Horario h : turma.getHorarios()) {
@@ -165,7 +162,6 @@ public class GeradorDeGrades {
                 }
             }
         }
-
         return pontos;
     }
 

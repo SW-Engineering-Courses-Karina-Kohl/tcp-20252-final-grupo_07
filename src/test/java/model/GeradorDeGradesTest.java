@@ -106,7 +106,7 @@ public class GeradorDeGradesTest {
         adicionarDisciplinaComTurma("INF01120", "TCP", "A", "Karina Kohl", 8, 10, DiaSemana.SEGUNDA);
         adicionarDisciplinaComTurma("INF05516", "Semantica Formal", "A", "Professor Ficticio", 10, 12, DiaSemana.SEGUNDA);
 
-        preferencias.adicionarProfessorEvitado("Professor Ficticio");
+        preferencias.adicionarProfessorDescartado("Professor Ficticio");
 
         GeradorDeGrades gerador = new GeradorDeGrades(disciplinas, preferencias);
         gerador.gerarGrades();

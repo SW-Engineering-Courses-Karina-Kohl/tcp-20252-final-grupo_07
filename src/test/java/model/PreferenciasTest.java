@@ -20,11 +20,11 @@ public class PreferenciasTest {
         Preferencias preferencias = new Preferencias();
         
         assertNotNull(preferencias.getProfessoresPreferidos());
-        assertNotNull(preferencias.getProfessoresEvitados());
+        assertNotNull(preferencias.getProfessoresDescartados());
         assertNotNull(preferencias.getHorariosBloqueados());
 
         assertTrue(preferencias.getProfessoresPreferidos().isEmpty());
-        assertTrue(preferencias.getProfessoresEvitados().isEmpty());
+        assertTrue(preferencias.getProfessoresDescartados().isEmpty());
         assertTrue(preferencias.getHorariosBloqueados().isEmpty());
 
         assertEquals(0, preferencias.getNumeroDisciplinas());
@@ -50,16 +50,16 @@ public class PreferenciasTest {
 
     @Test
     @DisplayName("Adiciona professores evitados corretamente")
-    void adicionaProfessoresEvitados() {
+    void adicionaProfessoresDescartados() {
         logger.info("Teste: Adiciona professores evitados nas Preferencias");
         
         Preferencias preferencias = new Preferencias();
-        preferencias.adicionarProfessorEvitado("Primeiro Professor");
-        preferencias.adicionarProfessorEvitado("Segundo Professor");
+        preferencias.adicionarProfessorDescartado("Primeiro Professor");
+        preferencias.adicionarProfessorDescartado("Segundo Professor");
 
-        assertEquals(2, preferencias.getProfessoresEvitados().size());
-        assertTrue(preferencias.getProfessoresEvitados().contains("Primeiro Professor"));
-        assertTrue(preferencias.getProfessoresEvitados().contains("Segundo Professor"));
+        assertEquals(2, preferencias.getProfessoresDescartados().size());
+        assertTrue(preferencias.getProfessoresDescartados().contains("Primeiro Professor"));
+        assertTrue(preferencias.getProfessoresDescartados().contains("Segundo Professor"));
 
         logger.info("Sucesso: Adicao de professores evitados verificada.");
     }

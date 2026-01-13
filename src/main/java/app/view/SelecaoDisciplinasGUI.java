@@ -3,6 +3,7 @@ package app.view;
 import javax.swing.*;
 
 import app.controller.AppController;
+import app.view.utils.BtnDefault;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -15,6 +16,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import java.text.Normalizer;
 
 import model.Disciplina;
 
@@ -27,6 +31,8 @@ public class SelecaoDisciplinasGUI {
     private static JList<String> listDisponiveis = new JList<>(modelDisponiveis);
     private static JList<String> listSelecionadas = new JList<>(modelSelecionadas);
     private static final Collator COLL = Collator.getInstance(Locale.getDefault());
+
+    private static JTextField searchBar;
 
     public static JPanel criarTela(AppController controller) {
         JPanel painel = new JPanel(new BorderLayout());
@@ -58,9 +64,27 @@ public class SelecaoDisciplinasGUI {
             }
         });
 
+        //frase indicadora de pesquisa
+        JLabel labelFrase = new JLabel("Procurar disciplinas:");
+        labelFrase.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        c.gridx = 0; c.gridy = 0; c.fill = GridBagConstraints.HORIZONTAL; c.weighty = 0;
+        centro.add(labelFrase,c);
+
+        //barra pesquisa 
+        searchBar = new JTextField();
+        searchBar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrarDisciplinas(controller); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrarDisciplinas(controller); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { }
+        });
+        c.gridx = 0; c.gridy = 1; c.fill = GridBagConstraints.HORIZONTAL; c.weighty = 0;
+        centro.add(searchBar,c);
+
+        
+        //lista de disciplinas disponiveis
         JScrollPane scrollLeft = new JScrollPane(listDisponiveis);
         scrollLeft.setPreferredSize(new Dimension(350, 420));
-        c.gridx = 0; c.gridy = 0; c.fill = GridBagConstraints.BOTH; c.weightx = 0.45; c.weighty = 1.0;
+        c.gridx = 0; c.gridy = 2; c.fill = GridBagConstraints.BOTH; c.weightx = 0.45; c.weighty = 1.0;
         centro.add(scrollLeft, c);
 
         // setinhas
@@ -76,23 +100,25 @@ public class SelecaoDisciplinasGUI {
         middle.add(btnLeft);
         middle.add(Box.createVerticalGlue());
 
-        c.gridx = 1; c.gridy = 0; c.fill = GridBagConstraints.NONE; c.weightx = 0.1;
+        c.gridx = 1; c.gridy = 2; c.fill = GridBagConstraints.NONE; c.weightx = 0.1;
         centro.add(middle, c);
 
+        //lista de disciplinas selecionadas
         JScrollPane scrollRight = new JScrollPane(listSelecionadas);
         scrollRight.setPreferredSize(new Dimension(350, 420));
-        c.gridx = 2; c.gridy = 0; c.fill = GridBagConstraints.BOTH; c.weightx = 0.45;
+        c.gridx = 2; c.gridy = 2; c.fill = GridBagConstraints.BOTH; c.weightx = 0.45;
         centro.add(scrollRight, c);
 
         painel.add(centro, BorderLayout.CENTER);
 
-        JPanel painelSul = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton btnVoltar = new JButton("Voltar");
-        JButton btnContinuar = new JButton("Continuar");
-        btnContinuar.setPreferredSize(new Dimension(120, 36));
-        painelSul.add(btnVoltar);
-        painelSul.add(Box.createRigidArea(new Dimension(8,0)));
-        painelSul.add(btnContinuar);
+        JPanel painelSul = new JPanel(new BorderLayout());
+        painelSul.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+
+        BtnDefault btnVoltar = new BtnDefault("Voltar");
+        BtnDefault btnContinuar = new BtnDefault("Continuar");
+
+        painelSul.add(btnVoltar, BorderLayout.WEST);       
+        painelSul.add(btnContinuar, BorderLayout.EAST);
         painel.add(painelSul, BorderLayout.SOUTH);
 
         //acoes
@@ -153,6 +179,29 @@ public class SelecaoDisciplinasGUI {
         return painel;
     }
 
+    public static void filtrarDisciplinas(AppController controller){
+        String userInput = normalize(searchBar.getText());
+        modelDisponiveis.clear();
+
+        for (Disciplina d : controller.getDisciplinasCarregadas()){
+            String label = d.getCodigo() + " - " + d.getNome();
+            String labelNormalizada = normalize(label);
+            
+            if(labelNormalizada.contains(userInput)){
+                if (!modelSelecionadas.contains(label)){
+                    insertSorted(modelDisponiveis, label);
+                }
+            }
+        }
+    
+    }
+
+    public static String normalize(String str) {
+        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD); 
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("").toLowerCase();
+    }
+
     public static void atualizarLista(AppController controller) {
         mapaLabelDisciplina.clear();
         modelDisponiveis.clear();
@@ -170,7 +219,6 @@ public class SelecaoDisciplinasGUI {
     private static void moveItems(DefaultListModel<String> from, DefaultListModel<String> to, List<String> items) {
         if (items == null || items.isEmpty()) return;
 
-        
         List<Integer> indices = new ArrayList<>();
         int minIdx = Integer.MAX_VALUE;
         for (String s : items) {

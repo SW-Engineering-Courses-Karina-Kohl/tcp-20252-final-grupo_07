@@ -1,5 +1,6 @@
-package app.view;
+    package app.view;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import app.controller.AppController;
 
@@ -30,14 +31,20 @@ public class GradeGUI {
 
         //barra de scroll dos botoes do painel de topo
         JScrollPane scrollpainelTopo = new JScrollPane(painelTopo);
+        scrollpainelTopo.getHorizontalScrollBar().setUnitIncrement(20);
         root.add(scrollpainelTopo, BorderLayout.NORTH);
         scrollpainelTopo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
+        
         painelGrade = new JPanel();
+
+        //barra de scroll da grade 
+        JScrollPane scrollGrade = new JScrollPane(painelGrade);
+        scrollGrade.getVerticalScrollBar().setUnitIncrement(20);
+        root.add(scrollGrade, BorderLayout.CENTER);
+
         painelGrade.setLayout(new GridLayout(HORAS + 1, DIAS + 1, 5, 5));
         painelGrade.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        root.add(new JScrollPane(painelGrade), BorderLayout.CENTER);
 
         root.addHierarchyListener(h -> {
             if ((h.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {

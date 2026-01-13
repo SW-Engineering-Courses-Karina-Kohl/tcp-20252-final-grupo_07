@@ -7,14 +7,20 @@ public class Preferencias {
     private Turno turnoPreferido;
     private List<String> professoresPreferidos;
 
-    private List<String> professoresEvitados;
-    private List<Horario> horariosEvitados;
+    private List<String> professoresDescartados;
+    private List<Horario> horariosDescartados;
+
+    private List<Turma> turmasPreferidas;
+    private List<Turma> turmasDescartadas;
     private int numeroDisciplinas; 
 
     public Preferencias() {
         this.professoresPreferidos = new ArrayList<>();
-        this.professoresEvitados = new ArrayList<>();
-        this.horariosEvitados = new ArrayList<>();
+        this.professoresDescartados = new ArrayList<>();
+
+        this.turmasPreferidas = new ArrayList<>();
+        this.turmasDescartadas = new ArrayList<>();
+        this.horariosDescartados = new ArrayList<>();
         this.numeroDisciplinas = 0; 
     }
 
@@ -42,19 +48,35 @@ public class Preferencias {
         this.professoresPreferidos.add(nome);
     }
 
-    public List<String> getProfessoresEvitados() {
-        return professoresEvitados;
+    public List<String> getProfessoresDescartados() {
+        return professoresDescartados;
     }
 
-    public void adicionarProfessorEvitado(String nome) {
-        this.professoresEvitados.add(nome);
+    public void adicionarProfessorDescartado(String nome) {
+        this.professoresDescartados.add(nome);
     }
 
     public List<Horario> getHorariosBloqueados() {
-        return horariosEvitados;
+        return horariosDescartados;
     }
 
     public void adicionarHorarioBloqueado(Horario horario) {
-        this.horariosEvitados.add(horario);
+        this.horariosDescartados.add(horario);
+    }
+
+    public void adicionarTurmaPreferida(Turma t){
+        this.turmasPreferidas.add(t);
+    }
+
+    public List<Turma> getTurmasPreferidas(){
+        return turmasPreferidas;
+    }
+
+    public void adicionarTurmaDescartada(Turma t){
+        this.turmasDescartadas.add(t);
+    }
+
+    public List<Turma> getTurmasDescartadas(){
+        return turmasDescartadas;
     }
 }

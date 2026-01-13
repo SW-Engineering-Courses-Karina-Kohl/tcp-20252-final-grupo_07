@@ -6,20 +6,23 @@ import java.io.PrintWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+//Le o arquivo preferencias.csv e armazena os dados lidos OU escreve preferencias no arquivo
 public class GerenciadorDePreferencias {
 
     private static final Logger logger = LogManager.getLogger(GerenciadorDePreferencias.class);
 
     //numero de linhas do cabeçalho
-    private static final int TAM_HEADER = 4;
+    private static final int TAM_HEADER = 5;
 
-    public Preferencias carregarPreferencias(String caminhoArquivo) {
+
+    public Preferencias carregarPreferencias(String caminhoArquivo, List<Turma> turmas) {
         File arquivo = new File(caminhoArquivo);
         Preferencias preferencias = new Preferencias();
 
@@ -31,13 +34,12 @@ public class GerenciadorDePreferencias {
         logger.info("Carregando preferências a partir do arquivo '{}'.", caminhoArquivo);
 
         try (Scanner scanner = new Scanner(arquivo)) {
-
             //cabeçalho
             for (int i = 0; i < TAM_HEADER && scanner.hasNextLine(); i++) {
                 scanner.nextLine();
             }
 
-            //linha 5 - turno preferido
+            //turno preferido
             if (scanner.hasNextLine()) {
                 String linhaTurno = scanner.nextLine().trim();
                 if (!linhaTurno.isBlank()) {
@@ -49,35 +51,41 @@ public class GerenciadorDePreferencias {
                 }
             }
 
-            //linha 6 - professores preferidos
-            if (scanner.hasNextLine()) {
+            //turmas preferidas
+            if (scanner.hasNextLine()) { //esta pegando todas as turmas em vez das turmas 
                 String linhaProfsPref = scanner.nextLine().trim();
                 if (!linhaProfsPref.isBlank()) {
-                    String[] nomes = linhaProfsPref.split(",");
-                    for (String nome : nomes) {
-                        String limpo = nome.trim();
-                        if (!limpo.isEmpty()) {
-                            preferencias.adicionarProfessorPreferido(limpo);
+                    String[] stringsTurmas = linhaProfsPref.split(",");
+                    for (String stringTurma : stringsTurmas) {
+                        for (Turma t : turmas){
+                            String labelTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+
+                            if (stringTurma.equals(labelTurma)) {
+                                preferencias.adicionarTurmaPreferida(t);
+                            }
                         }
                     }
                 }
             }
 
-            //linha 7 - professores evitados
+            //turmas descartadas
             if (scanner.hasNextLine()) {
-                String linhaProfsEv = scanner.nextLine().trim();
-                if (!linhaProfsEv.isBlank()) {
-                    String[] nomes = linhaProfsEv.split(",");
-                    for (String nome : nomes) {
-                        String limpo = nome.trim();
-                        if (!limpo.isEmpty()) {
-                            preferencias.adicionarProfessorEvitado(limpo);
+                String linhaProfsDesc = scanner.nextLine().trim();
+                if (!linhaProfsDesc.isBlank()) {
+                    String[] stringsTurmas = linhaProfsDesc.split(",");
+                    for (String stringTurma : stringsTurmas) {
+                        for (Turma t : turmas){
+                            String labelTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+                            
+                            if (stringTurma.equals(labelTurma)) {
+                                preferencias.adicionarTurmaDescartada(t);
+                            }
                         }
                     }
                 }
             }
 
-            // linha 8 - horarios bloqueados
+            //horarios bloqueados
             if (scanner.hasNextLine()) {
                 String linhaHorarios = scanner.nextLine().trim();
                 if (!linhaHorarios.isBlank()) {
@@ -107,7 +115,7 @@ public class GerenciadorDePreferencias {
                 }
             }
 
-            // linha 9 - numero de disciplinas
+            //numero de disciplinas
             if (scanner.hasNextLine()) {
                 String linhaNum = scanner.nextLine().trim();
                 if (!linhaNum.isBlank()) {
@@ -126,9 +134,9 @@ public class GerenciadorDePreferencias {
         } catch (FileNotFoundException e) {
             logger.error("Erro ao abrir arquivo de preferências '{}'.", caminhoArquivo, e);
         }
-
         return preferencias;
     }
+
 
     public void salvarPreferencias(String caminhoArquivo, Preferencias preferencias) {
         logger.info("Salvando preferências no arquivo '{}'.", caminhoArquivo);
@@ -137,9 +145,10 @@ public class GerenciadorDePreferencias {
 
             //cabeçalho
             writer.println("1 - Turno Preferido");
-            writer.println("2 - Professores Preferidos");
-            writer.println("3 - Professores Evitados");
-            writer.println("4 - Numero de Disciplinas");
+            writer.println("2 - Turmas Preferidas");
+            writer.println("3 - Turmas Descartadas");
+            writer.println("4 - Horários bloqueados");
+            writer.println("5 - Numero de Disciplinas");
 
             if (preferencias.getTurnoPreferido() != null) {
                 writer.println(preferencias.getTurnoPreferido().name());
@@ -147,10 +156,30 @@ public class GerenciadorDePreferencias {
                 writer.println("");
             }
 
-            writer.println(String.join(", ", preferencias.getProfessoresPreferidos()));
+            //escreve turmas preferidas
+            List <String> strTurmasPref = new ArrayList<>();
+            for (Turma t : preferencias.getTurmasPreferidas()){
+                String labelTurmaPref = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+                strTurmasPref.add(labelTurmaPref);
+            }
+            if(strTurmasPref.isEmpty())
+                writer.println("");
+            else
+                writer.println(String.join(", ", strTurmasPref));
 
-            writer.println(String.join(", ", preferencias.getProfessoresEvitados()));
 
+            //escreve turmas descartadas
+            List <String> strTurmasDesc = new ArrayList<>();
+            for (Turma t : preferencias.getTurmasDescartadas()){
+                String labelTurmaDesc = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+                strTurmasDesc.add(labelTurmaDesc);
+            }
+            if(strTurmasDesc.isEmpty())
+                writer.println("");
+            else
+                writer.println(String.join(", ", strTurmasDesc));
+
+            //escreve horarios bloqueados
             List<Horario> horarios = preferencias.getHorariosBloqueados();
             if (horarios.isEmpty()) {
                 writer.println("");

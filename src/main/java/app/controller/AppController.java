@@ -33,7 +33,7 @@ public class AppController {
     private List<Disciplina> disciplinasCarregadas = new ArrayList<>();
 
     public AppController() {
-        frame = new JFrame("MATRICULADOR INF/UFRGS");
+        frame = new JFrame("AUXILIADOR DE MATRICULA INF/UFRGS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 650);
         frame.setLocationRelativeTo(null);
@@ -91,7 +91,7 @@ public class AppController {
         return new ArrayList<>(disciplinasCarregadas);
     }
 
-    ////Disciplinas existem baseadas nas turmas lidas selecionadas pelo usuário
+    //Disciplinas existem baseadas nas turmas lidas selecionadas pelo usuário
     public List<Disciplina> getDisciplinasSelecionadas() {
         List<Disciplina> disciplinasSelecionadas = new ArrayList<>();
         List<String> codigosVistos = new ArrayList<>();
@@ -118,8 +118,7 @@ public class AppController {
     public void mostrarInsercao() {layout.show(container, "INSERCAO");}
 
     public void mostrarPreferencias() {
-        //atualiza lista de professores com base nas turmas atuais
-        PreferenciasGUI.atualizarProfessores(this);
+        PreferenciasGUI.atualizarTurmas(this);
         layout.show(container, "PREFERENCIAS");
     }
 
