@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.text.Collator;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import java.util.regex.Pattern;
 import java.text.Normalizer;
 
 import model.Disciplina;
+import model.GerenciadorDePreferencias;
+import model.Preferencias;
 
 public class SelecaoDisciplinasGUI {
 
@@ -158,9 +161,11 @@ public class SelecaoDisciplinasGUI {
 
         btnContinuar.addActionListener(e -> {
             List<Disciplina> selecionadas = new ArrayList<>();
+            List<String> listStrSelecionadas = new ArrayList<>();
 
             for (int i = 0; i < modelSelecionadas.size(); i++) {
                 String label = modelSelecionadas.get(i);
+                listStrSelecionadas.add(label);
                 Disciplina d = mapaLabelDisciplina.get(label);
                 if (d != null) selecionadas.add(d);
             }
@@ -172,8 +177,42 @@ public class SelecaoDisciplinasGUI {
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            else {
+                GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
 
-            controller.definirDisciplinasSelecionadas(selecionadas);
+                List <String> listStrDisciplinasArq = ger.carregarStrDisciplinas("preferencias.csv");
+                Collections.sort(listStrSelecionadas);
+                Collections.sort(listStrDisciplinasArq);
+                System.out.println("selecionadas" + listStrSelecionadas); 
+                System.out.println("no arquivo   " + listStrDisciplinasArq);
+                //compara se as disciplinas selecionadas sao as mesmas que ja estavam no arquivo 
+                Boolean mesmasDisciplinas = listStrSelecionadas.equals(listStrDisciplinasArq);
+
+                if(!mesmasDisciplinas){
+                    StringBuilder sb = new StringBuilder();
+                    for (String s : listStrDisciplinasArq){
+                        sb.append(s).append("\n");
+                    }
+                    String strDisciplinas = sb.toString();
+                   
+                    int result = JOptionPane.showConfirmDialog(painel, 
+                        "Novo conjunto de disciplinas selecionado. Deseja apagar suas preferencias para as disciplinas:\n" + strDisciplinas + "e continuar?", 
+                        "Continuar?", 
+                        JOptionPane.YES_NO_OPTION);
+                    
+                    if (result == JOptionPane.YES_OPTION) {
+                        //apaga preferencias antigas
+                        Preferencias prefs = new Preferencias();
+                        ger.salvarPreferencias("preferencias.csv", prefs);
+                        ger.salvarDisciplinas("preferencias.csv", selecionadas);
+                        controller.definirDisciplinasSelecionadas(selecionadas, false);
+                    }
+                }
+                else {
+                    controller.definirDisciplinasSelecionadas(selecionadas, true);
+                    
+                }   
+            }
         });
 
         return painel;

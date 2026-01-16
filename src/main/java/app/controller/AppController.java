@@ -44,7 +44,7 @@ public class AppController {
         // registra as telas
         container.add(MenuInicialGUI.criarTela(this), "MENU");
         container.add(InsercaoGUI.criarTela(this), "INSERCAO");
-        container.add(PreferenciasGUI.criarTela(this), "PREFERENCIAS");
+        container.add(PreferenciasGUI.criarTela(this, false), "PREFERENCIAS");
         container.add(GradeGUI.criarTela(this), "GRADE");
         container.add(SelecaoDisciplinasGUI.criarTela(this), "SELEC_DISC");
 
@@ -117,8 +117,8 @@ public class AppController {
 
     public void mostrarInsercao() {layout.show(container, "INSERCAO");}
 
-    public void mostrarPreferencias() {
-        PreferenciasGUI.atualizarTurmas(this);
+    public void mostrarPreferencias(Boolean autoCarregar) {
+        PreferenciasGUI.atualizarTurmas(this, autoCarregar);
         layout.show(container, "PREFERENCIAS");
     }
 
@@ -155,7 +155,7 @@ public class AppController {
         mostrarSelecaoDisciplinas();
     }
 
-    public void definirDisciplinasSelecionadas(List<Disciplina> selecionadas) {
+    public void definirDisciplinasSelecionadas(List<Disciplina> selecionadas, Boolean autoCarregar) {
         turmasCriadas.clear();
 
         if (selecionadas != null) {
@@ -165,7 +165,8 @@ public class AppController {
                 }
             }
         }
-        mostrarPreferencias();
+        //habilita carregamento automatico das 
+        mostrarPreferencias(autoCarregar);
     }
 
     public void gerarGrades() {

@@ -77,7 +77,7 @@ public class GradeGUI {
         //botao das preferencias
         JButton btnPreferencias = new JButton("Preferências");
         btnPreferencias.setBackground(Color.WHITE);
-        btnPreferencias.addActionListener(e -> app.mostrarPreferencias());
+        btnPreferencias.addActionListener(e -> app.mostrarPreferencias(true));
         painelTopo.add(btnPreferencias);
 
         //botao de adicionar cadeiras manualmente

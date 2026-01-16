@@ -15,15 +15,11 @@ usa backtracking para gerar combinações válidas
 ordenar por qualidade e manter só as melhores
 */
 public class GeradorDeGrades {
-
     private static final Logger logger = LogManager.getLogger(GeradorDeGrades.class);
-
-    private static final int LIMITE_MAXIMO_RESULTADOS = 50;
 
     private List<Grade> gradesGeradas;
     private List<Disciplina> disciplinasDisponiveis;
     private Preferencias preferenciasUsuario;
-
 
     public GeradorDeGrades(List<Disciplina> disciplinas, Preferencias preferencias) {
         this.gradesGeradas = new ArrayList<>();
@@ -130,18 +126,6 @@ public class GeradorDeGrades {
             }
         });
     }
-
-    //limita o numero de resultados para nao explodir em tempo de execucao
-    /* 
-    private void aplicarCorteDeSeguranca() {
-        if (gradesGeradas.size() > LIMITE_MAXIMO_RESULTADOS) {
-            logger.info("Muitas combinações encontradas ({}). Mantendo apenas as Top {}.",
-                    gradesGeradas.size(), LIMITE_MAXIMO_RESULTADOS);
-
-            gradesGeradas = new ArrayList<>(gradesGeradas.subList(0, LIMITE_MAXIMO_RESULTADOS));
-        }
-    }
-    */
 
     private int calcularPontuacao(Grade grade) {
         int pontos = 0;

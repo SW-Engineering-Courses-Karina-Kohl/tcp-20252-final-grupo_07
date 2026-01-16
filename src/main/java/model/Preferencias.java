@@ -6,13 +6,15 @@ import java.util.ArrayList;
 public class Preferencias {
     private Turno turnoPreferido;
     private List<String> professoresPreferidos;
-
     private List<String> professoresDescartados;
+
     private List<Horario> horariosDescartados;
 
     private List<Turma> turmasPreferidas;
     private List<Turma> turmasDescartadas;
+
     private int numeroDisciplinas; 
+    private List<Disciplina> disciplinas;
 
     public Preferencias() {
         this.professoresPreferidos = new ArrayList<>();

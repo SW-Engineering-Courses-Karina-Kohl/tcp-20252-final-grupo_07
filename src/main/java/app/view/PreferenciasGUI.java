@@ -83,7 +83,9 @@ public class PreferenciasGUI {
     private static ButtonGroup grupoTurno;
     private static JSpinner spinnerNumCad;
 
-    public static JPanel criarTela(AppController controller) {
+    private static Preferencias estadoPrefsSalvo;
+
+    public static JPanel criarTela(AppController controller, boolean autoCarregar) {
         JPanel painel = new JPanel(new BorderLayout());
 
         JLabel titulo = new JLabel("Preferencias do Usuario", SwingConstants.CENTER);
@@ -175,7 +177,7 @@ public class PreferenciasGUI {
         painelTurmas.add(scrollpainelDesc);
 
         //monta a lista inicial 
-        atualizarTurmas(controller);
+        atualizarTurmas(controller, autoCarregar);
         
         painelDireito.add(painelTurmas);
 
@@ -188,19 +190,22 @@ public class PreferenciasGUI {
         
         BtnDefault btnMenu = new BtnDefault("Ir para menu");
         btnMenu.addActionListener(e -> {
-            /* 
-            painelPref.removeAll();
-            painelDesc.removeAll();
+            Preferencias prefsAoSair = getPrefsDaTela();
 
-            mapaPref.clear();
-            mapaDesc.clear();
-            mapaTurma.clear();
-        */
-            controller.mostrarMenuInicial();
+            if (prefsDiferentes(prefsAoSair, estadoPrefsSalvo)){
+                int result = JOptionPane.showConfirmDialog(painel, 
+                        "Suas modificações não foram salvas. Deseja sair assim mesmo?", 
+                        "Deseja sair?", 
+                        JOptionPane.YES_NO_OPTION);
+                
+                if(result == JOptionPane.YES_OPTION){
+                    controller.mostrarMenuInicial();
+                }
+            }
+            else{
+                controller.mostrarMenuInicial();
+            }
         });
-
-        BtnDefault btnCarregar = new BtnDefault("Carregar preferências");
-        btnCarregar.addActionListener(e -> carregarPreferenciasNaTela(controller));
 
         BtnDefault btnLimpar = new BtnDefault("Limpar preferências");
         btnLimpar.addActionListener(e -> {
@@ -226,56 +231,7 @@ public class PreferenciasGUI {
                 return;
             }
 
-            Preferencias prefs = new Preferencias();
-
-            // turno preferido
-            if (rbManha.isSelected()) {
-                prefs.setTurnoPreferido(Turno.MANHA);
-            } else if (rbTarde.isSelected()) {
-                prefs.setTurnoPreferido(Turno.TARDE);
-            } else if (rbNoite.isSelected()) {
-                prefs.setTurnoPreferido(Turno.NOITE);
-            }
-
-            //número de cadeiras
-            int numCadeiras = (int) spinnerNumCad.getValue();
-            prefs.setNumeroDisciplinas(numCadeiras);
-
-            //horários bloqueados
-            List<Horario> bloqueados = obterHorariosBloqueados();
-            for (Horario h : bloqueados) {
-                prefs.adicionarHorarioBloqueado(h);
-            }
-
-            //turmas preferidas
-            for (String dadosTurma : mapaPref.keySet()) {
-                JCheckBox cb = mapaPref.get(dadosTurma);
-
-                if (cb.isSelected()) {
-                    //recupera a turma associada a string (que vai no checkbox) de seus dados
-                    Turma t = mapaTurma.get(dadosTurma);
-                    if(t != null){
-                        prefs.adicionarTurmaPreferida(t);
-                    }
-                    else{
-                        System.err.println("Erro ao add turma preferida: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
-                }
-            }
-
-            //turmas evitadas
-            for (String dadosTurma : mapaDesc.keySet()) {
-                JCheckBox cb = mapaDesc.get(dadosTurma);
-
-                if (cb.isSelected()) {
-                    //recupera a turma associada a string (que vai no checkbox) de seus dados
-                    Turma t = mapaTurma.get(dadosTurma);
-                    if(t != null){
-                        prefs.adicionarTurmaDescartada(t);
-                    }
-                    else{
-                        System.err.println("Erro ao add turma descartada: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
-                }
-            }
+            Preferencias prefs = getPrefsDaTela();
 
             //salva no controller
             controller.definirPreferencias(prefs);
@@ -284,11 +240,13 @@ public class PreferenciasGUI {
             GerenciadorDePreferencias ger = new GerenciadorDePreferencias();
             ger.salvarPreferencias(CAMINHO_PREFS, prefs);
 
+            //salva as ultimas mods feitas
+            estadoPrefsSalvo = prefs;
+
             controller.gerarGrades();
         });
 
         painelBotoes.add(btnMenu);
-        painelBotoes.add(btnCarregar);
         painelBotoes.add(btnLimpar);
         painelBotoes.add(btnGerar);
 
@@ -369,7 +327,7 @@ public class PreferenciasGUI {
         return bloqueados;
     }
 
-    public static void atualizarTurmas(AppController controller) {
+    public static void atualizarTurmas(AppController controller, Boolean autoCarregar) {
             
         //Atualiza valores do spinner
         if (spinnerNumCad != null) {
@@ -396,7 +354,7 @@ public class PreferenciasGUI {
 
         for (Turma t : controller.getTurmas()) {
             if (t != null) {
-                String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+                String strTurma =  t.getDisciplina().getNome() + " | " + "Turma " + t.getCodigo() + " | " + "Prof(a). " + t.getProfessor();
                 mapaTurma.put(strTurma, t);
                 stringsTurmas.add(strTurma);
             }
@@ -427,8 +385,114 @@ public class PreferenciasGUI {
             painelDesc.add(cbDesc);
         }
 
+        if (autoCarregar)
+            carregarPreferenciasNaTela(controller);
+
         painelPref.revalidate(); painelPref.repaint();
         painelDesc.revalidate(); painelDesc.repaint();
+    }
+
+    private static boolean prefsDiferentes(Preferencias p1, Preferencias p2) {
+        if (p1 == null || p2 == null) return true; // Segurança
+
+        // 1. Compara primitivos e Enums
+        if (p1.getNumeroDisciplinas() != p2.getNumeroDisciplinas()) return true;
+        if (p1.getTurnoPreferido() != p2.getTurnoPreferido()) return true;
+
+        // 2. Compara Listas (Usando HashSet para ignorar a ordem dos elementos)
+        // Se a ordem importar para você, remova o "new HashSet" e use apenas as listas.
+        
+        // Turmas Preferidas
+        Set<String> codigosP1 = obterCodigos(p1.getTurmasPreferidas());
+        Set<String> codigosP2 = obterCodigos(p2.getTurmasPreferidas());
+        if (!codigosP1.equals(codigosP2)) return true;
+
+        // Turmas Descartadas
+        Set<String> codigosD1 = obterCodigos(p1.getTurmasDescartadas());
+        Set<String> codigosD2 = obterCodigos(p2.getTurmasDescartadas());
+        if (!codigosD1.equals(codigosD2)) return true;
+
+        // Horários (Assumindo que Horario tem toString ou equals bem definidos)
+        // Se Horario nao tiver equals, isso pode falhar. Recomendo comparar Strings
+        Set<String> horarios1 = new HashSet<>();
+        for(Horario h : p1.getHorariosBloqueados()) 
+            horarios1.add(h.getDiaSemana() + "-" + h.getInicio());
+            
+        Set<String> horarios2 = new HashSet<>();
+        for(Horario h : p2.getHorariosBloqueados()) 
+            horarios2.add(h.getDiaSemana() + "-" + h.getInicio());
+
+        if (!horarios1.equals(horarios2)) return true;
+
+        return false; // Se passou por tudo, são iguais (false para mudanças)
+    }
+
+    // Auxiliar para pegar códigos únicos e comparar turmas
+    private static Set<String> obterCodigos(List<Turma> turmas) {
+        Set<String> codigos = new HashSet<>();
+        if (turmas != null) {
+            for (Turma t : turmas) {
+                // Identificador único da turma para comparação
+                codigos.add(t.getCodigo() + "-" + t.getDisciplina().getNome());
+            }
+        }
+        return codigos;
+    }
+
+    //le botoes de preferencias e monta o objeto Preferencias prefs
+    private static Preferencias getPrefsDaTela(){
+        Preferencias prefs = new Preferencias();
+
+        // salva turno selecionado
+        if (rbManha.isSelected()) {
+            prefs.setTurnoPreferido(Turno.MANHA);
+        } else if (rbTarde.isSelected()) {
+            prefs.setTurnoPreferido(Turno.TARDE);
+        } else if (rbNoite.isSelected()) {
+            prefs.setTurnoPreferido(Turno.NOITE);
+        }
+
+        //número de cadeiras
+        int numCadeiras = (int) spinnerNumCad.getValue();
+        prefs.setNumeroDisciplinas(numCadeiras);
+
+        //horários bloqueados
+        List<Horario> bloqueados = obterHorariosBloqueados();
+        for (Horario h : bloqueados) {
+            prefs.adicionarHorarioBloqueado(h);
+        }
+
+        //turmas preferidas
+        for (String dadosTurma : mapaPref.keySet()) {
+            JCheckBox cb = mapaPref.get(dadosTurma);
+
+            if (cb.isSelected()) {
+                //recupera a turma associada a string (que vai no checkbox) de seus dados
+                Turma t = mapaTurma.get(dadosTurma);
+                if(t != null){
+                    prefs.adicionarTurmaPreferida(t);
+                }
+                else{
+                    System.err.println("Erro ao add turma preferida: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
+            }
+        }
+
+        //turmas evitadas
+        for (String dadosTurma : mapaDesc.keySet()) {
+            JCheckBox cb = mapaDesc.get(dadosTurma);
+
+            if (cb.isSelected()) {
+                //recupera a turma associada a string (que vai no checkbox) de seus dados
+                Turma t = mapaTurma.get(dadosTurma);
+                if(t != null){
+                    prefs.adicionarTurmaDescartada(t);
+                }
+                else{
+                    System.err.println("Erro ao add turma descartada: A chave '" + dadosTurma + "' não foi encontrada no mapa de turmas.");                    }
+            }
+        }
+
+        return prefs;
     }
 
     //carregar preferências do CSV e jogar na tela 
@@ -447,10 +511,10 @@ public class PreferenciasGUI {
         boolean arquivoVazio = semTurno && semTurmaPref && semTurmaDesc && semHorarios && numCadeirasZerado;
 
         if (arquivoVazio) {
-            JOptionPane.showMessageDialog(null,
+            /*JOptionPane.showMessageDialog(null,
                     "Nenhuma preferência salva encontrada.",
                     "Aviso",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);*/
             return;
         }
         //se tiver preferencia aplica
@@ -501,6 +565,11 @@ public class PreferenciasGUI {
             if (idxHora != -1 && idxDia != -1) {
                 matrizDisponibilidade[idxHora][idxDia].setSelected(true);
             }
+
+            //salva estado atual das preferencias deixar delay entre clique e resposta visual
+            SwingUtilities.invokeLater(() -> {
+                estadoPrefsSalvo = getPrefsDaTela();
+            });
         }
 
         //turmas
@@ -509,13 +578,13 @@ public class PreferenciasGUI {
         for (JCheckBox cb : mapaDesc.values()) cb.setSelected(false);
 
         for (Turma t : prefs.getTurmasPreferidas()) {
-            String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+            String strTurma =  t.getDisciplina().getNome() + " | " + "Turma " + t.getCodigo() + " | " + "Prof(a). " + t.getProfessor();
             JCheckBox cb = mapaPref.get(strTurma);
             if (cb != null) cb.setSelected(true);
         }
 
         for (Turma t : prefs.getTurmasDescartadas()) {
-            String strTurma = t.getDisciplina().getNome() + ": " + t.getCodigo() + " - " + t.getProfessor();
+            String strTurma =  t.getDisciplina().getNome() + " | " + "Turma " + t.getCodigo() + " | " + "Prof(a). " + t.getProfessor();
             JCheckBox cb = mapaDesc.get(strTurma);
             if (cb != null) cb.setSelected(true);
         }

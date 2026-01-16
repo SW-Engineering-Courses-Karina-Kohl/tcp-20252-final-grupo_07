@@ -169,7 +169,7 @@ public class InsercaoGUI {
                         "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            controller.mostrarPreferencias();
+            controller.mostrarPreferencias(true);
         });
 
         subPainelEsquerda.add(btnIrPreferencias);

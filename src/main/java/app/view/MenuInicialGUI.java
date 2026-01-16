@@ -20,7 +20,7 @@ public class MenuInicialGUI {
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
 
         JPanel botoes = new JPanel();
-        botoes.setLayout(new GridLayout(4, 1, 20, 20));
+        botoes.setLayout(new GridLayout(5, 1, 20, 20));
 
         botoes.setBorder(BorderFactory.createEmptyBorder(0, 200, 0, 200));
 
